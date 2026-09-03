@@ -1,0 +1,442 @@
+   1              		.file	"loader.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p1_m2p0_c2p0_zicsr2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.file 0 "D:\\GwinPrj\\Eclipse\\picorv32_demo\\Debug" "../src/loader.c"
+  10              		.section	.btsec,"ax",@progbits
+  11              		.align	1
+  12              		.globl	boot
+  14              	boot:
+  15              	.LFB3:
+  16              		.file 1 "../src/loader.c"
+   1:../src/loader.c **** /*
+   2:../src/loader.c ****  ******************************************************************************************
+   3:../src/loader.c ****  * @file		loader.c
+   4:../src/loader.c ****  * @author		GowinSemicoductor
+   5:../src/loader.c ****  * @device		Gowin_PicoRV32
+   6:../src/loader.c ****  * @brief		Loader for booting from spi-flash and running in itcm.
+   7:../src/loader.c ****  ******************************************************************************************
+   8:../src/loader.c ****  */
+   9:../src/loader.c **** 
+  10:../src/loader.c **** /* Includes --------------------------------------------------------------------- */
+  11:../src/loader.c **** #include "config.h"
+  12:../src/loader.c **** #include "picorv32.h"
+  13:../src/loader.c **** 
+  14:../src/loader.c **** /*
+  15:../src/loader.c ****  * For booting from SPI Flash and running in ITCM
+  16:../src/loader.c ****  *
+  17:../src/loader.c ****  * */
+  18:../src/loader.c **** 
+  19:../src/loader.c **** #if BUILD_MODE == BUILD_BURN
+  20:../src/loader.c **** 
+  21:../src/loader.c **** void boot(void) __attribute__((section(".btsec")));
+  22:../src/loader.c **** void loader(void) __attribute__((section(".ldsec")));
+  23:../src/loader.c **** 
+  24:../src/loader.c **** 
+  25:../src/loader.c **** void boot(void)
+  26:../src/loader.c **** {
+  17              		.loc 1 26 1
+  18              		.cfi_startproc
+  19 0000 0111     		addi	sp,sp,-32
+  20              		.cfi_def_cfa_offset 32
+  21 0002 06CE     		sw	ra,28(sp)
+  22 0004 22CC     		sw	s0,24(sp)
+  23              		.cfi_offset 1, -4
+  24              		.cfi_offset 8, -8
+  25 0006 0010     		addi	s0,sp,32
+  26              		.cfi_def_cfa 8, 0
+  27:../src/loader.c **** 	extern int _lma_ldsec_start;
+  28:../src/loader.c **** 	extern int _lma_ldsec_end;
+  29:../src/loader.c **** 	extern int _vsloader;
+  30:../src/loader.c **** 
+  31:../src/loader.c **** 	unsigned int *src_ptr = (unsigned int *)(&_lma_ldsec_start);
+  27              		.loc 1 31 16
+  28 0008 97070000 		lla	a5,_lma_ldsec_start
+  28      93870700 
+  29 0010 2326F4FE 		sw	a5,-20(s0)
+  32:../src/loader.c **** 	unsigned int *src_ptr_end = (unsigned int *)(&_lma_ldsec_end);
+  30              		.loc 1 32 16
+  31 0014 97070000 		lla	a5,_lma_ldsec_end
+  31      93870700 
+  32 001c 2322F4FE 		sw	a5,-28(s0)
+  33:../src/loader.c **** 	unsigned int *dst_ptr = (unsigned int *)(&_vsloader);
+  33              		.loc 1 33 16
+  34 0020 97070000 		lla	a5,_vsloader
+  34      93870700 
+  35 0028 2324F4FE 		sw	a5,-24(s0)
+  34:../src/loader.c **** 
+  35:../src/loader.c **** 	src_ptr += 0x4100000;
+  36              		.loc 1 35 10
+  37 002c 0327C4FE 		lw	a4,-20(s0)
+  38 0030 B7074010 		li	a5,272629760
+  39 0034 BA97     		add	a5,a4,a5
+  40 0036 2326F4FE 		sw	a5,-20(s0)
+  36:../src/loader.c **** 	src_ptr_end += 0x4100000;
+  41              		.loc 1 36 14
+  42 003a 032744FE 		lw	a4,-28(s0)
+  43 003e B7074010 		li	a5,272629760
+  44 0042 BA97     		add	a5,a4,a5
+  45 0044 2322F4FE 		sw	a5,-28(s0)
+  46              	.L4:
+  37:../src/loader.c **** 
+  38:../src/loader.c **** 	while(1)
+  39:../src/loader.c **** 	{
+  40:../src/loader.c **** 		*dst_ptr = *src_ptr;
+  47              		.loc 1 40 14
+  48 0048 8327C4FE 		lw	a5,-20(s0)
+  49 004c 9843     		lw	a4,0(a5)
+  50              		.loc 1 40 12
+  51 004e 832784FE 		lw	a5,-24(s0)
+  52 0052 98C3     		sw	a4,0(a5)
+  41:../src/loader.c **** 		if(src_ptr == src_ptr_end)
+  53              		.loc 1 41 5
+  54 0054 0327C4FE 		lw	a4,-20(s0)
+  55 0058 832744FE 		lw	a5,-28(s0)
+  56 005c 630DF700 		beq	a4,a5,.L6
+  42:../src/loader.c **** 		{
+  43:../src/loader.c **** 			break;
+  44:../src/loader.c **** 		}
+  45:../src/loader.c **** 		dst_ptr++;
+  57              		.loc 1 45 10
+  58 0060 832784FE 		lw	a5,-24(s0)
+  59 0064 9107     		addi	a5,a5,4
+  60 0066 2324F4FE 		sw	a5,-24(s0)
+  46:../src/loader.c **** 		src_ptr++;
+  61              		.loc 1 46 10
+  62 006a 8327C4FE 		lw	a5,-20(s0)
+  63 006e 9107     		addi	a5,a5,4
+  64 0070 2326F4FE 		sw	a5,-20(s0)
+  40:../src/loader.c **** 		if(src_ptr == src_ptr_end)
+  65              		.loc 1 40 12
+  66 0074 D1BF     		j	.L4
+  67              	.L6:
+  43:../src/loader.c **** 		}
+  68              		.loc 1 43 4
+  69 0076 0100     		nop
+  47:../src/loader.c **** 	}
+  48:../src/loader.c **** 	__asm__ __volatile__("la t3, _vsloader");
+  70              		.loc 1 48 2
+  71              	 #APP
+  72              	# 48 "../src/loader.c" 1
+  49              		__asm__ __volatile__("jr t3");
+  73              		la t3, _vsloader
+  74              	# 0 "" 2
+  75              		.loc 1 49 2
+  76              	# 49 "../src/loader.c" 1
+  50              	}
+  77              		jr t3
+  78              	# 0 "" 2
+  79              		.loc 1 50 1
+  80              	 #NO_APP
+  81 0082 0100     		nop
+  82 0084 F240     		lw	ra,28(sp)
+  83              		.cfi_restore 1
+  84 0086 6244     		lw	s0,24(sp)
+  85              		.cfi_restore 8
+  86              		.cfi_def_cfa 2, 32
+  87 0088 0561     		addi	sp,sp,32
+  88              		.cfi_def_cfa_offset 0
+  89 008a 8280     		jr	ra
+  90              		.cfi_endproc
+  91              	.LFE3:
+  93              		.section	.ldsec,"ax",@progbits
+  94              		.align	1
+  95              		.globl	loader
+  97              	loader:
+  98              	.LFB4:
+  51:../src/loader.c **** 
+  52:../src/loader.c **** void loader(void)
+  53:../src/loader.c **** {
+  99              		.loc 1 53 1
+ 100              		.cfi_startproc
+ 101 0000 0111     		addi	sp,sp,-32
+ 102              		.cfi_def_cfa_offset 32
+ 103 0002 06CE     		sw	ra,28(sp)
+ 104 0004 22CC     		sw	s0,24(sp)
+ 105              		.cfi_offset 1, -4
+ 106              		.cfi_offset 8, -8
+ 107 0006 0010     		addi	s0,sp,32
+ 108              		.cfi_def_cfa 8, 0
+  54:../src/loader.c **** 	extern int _cp_text_start;
+  55:../src/loader.c **** 	extern int _cp_text_end;
+  56:../src/loader.c **** 	extern int _vstext;
+  57:../src/loader.c **** 
+  58:../src/loader.c **** 	extern int _cp_data_start;
+  59:../src/loader.c **** 	extern int _cp_data_end;
+  60:../src/loader.c **** 	extern int _sdata;
+  61:../src/loader.c **** 
+  62:../src/loader.c **** 	unsigned int *src_ptr = (unsigned int *)((&_cp_text_start));
+ 109              		.loc 1 62 16
+ 110 0008 97070000 		lla	a5,_cp_text_start
+ 110      93870700 
+ 111 0010 2326F4FE 		sw	a5,-20(s0)
+  63:../src/loader.c **** 	unsigned int *src_ptr_end = (unsigned int *)((&_cp_text_end));
+ 112              		.loc 1 63 16
+ 113 0014 97070000 		lla	a5,_cp_text_end
+ 113      93870700 
+ 114 001c 2322F4FE 		sw	a5,-28(s0)
+  64:../src/loader.c **** 	unsigned int *dst_ptr = (unsigned int *)(&_vstext);
+ 115              		.loc 1 64 16
+ 116 0020 97070000 		lla	a5,_vstext
+ 116      93870700 
+ 117 0028 2324F4FE 		sw	a5,-24(s0)
+ 118              	.L10:
+  65:../src/loader.c **** 
+  66:../src/loader.c **** 	while(1)
+  67:../src/loader.c **** 	{
+  68:../src/loader.c **** 		*dst_ptr = *src_ptr;
+ 119              		.loc 1 68 14
+ 120 002c 8327C4FE 		lw	a5,-20(s0)
+ 121 0030 9843     		lw	a4,0(a5)
+ 122              		.loc 1 68 12
+ 123 0032 832784FE 		lw	a5,-24(s0)
+ 124 0036 98C3     		sw	a4,0(a5)
+  69:../src/loader.c **** 		if(src_ptr == src_ptr_end)
+ 125              		.loc 1 69 5
+ 126 0038 0327C4FE 		lw	a4,-20(s0)
+ 127 003c 832744FE 		lw	a5,-28(s0)
+ 128 0040 630DF700 		beq	a4,a5,.L16
+  70:../src/loader.c **** 		{
+  71:../src/loader.c **** 			break;
+  72:../src/loader.c **** 		}
+  73:../src/loader.c **** 		dst_ptr++;
+ 129              		.loc 1 73 10
+ 130 0044 832784FE 		lw	a5,-24(s0)
+ 131 0048 9107     		addi	a5,a5,4
+ 132 004a 2324F4FE 		sw	a5,-24(s0)
+  74:../src/loader.c **** 		src_ptr++;
+ 133              		.loc 1 74 10
+ 134 004e 8327C4FE 		lw	a5,-20(s0)
+ 135 0052 9107     		addi	a5,a5,4
+ 136 0054 2326F4FE 		sw	a5,-20(s0)
+  68:../src/loader.c **** 		if(src_ptr == src_ptr_end)
+ 137              		.loc 1 68 12
+ 138 0058 D1BF     		j	.L10
+ 139              	.L16:
+  71:../src/loader.c **** 		}
+ 140              		.loc 1 71 4
+ 141 005a 0100     		nop
+  75:../src/loader.c **** 	}
+  76:../src/loader.c **** 
+  77:../src/loader.c **** 	src_ptr = (unsigned int *)((&_cp_data_start));
+ 142              		.loc 1 77 10
+ 143 005c 97070000 		lla	a5,_cp_data_start
+ 143      93870700 
+ 144 0064 2326F4FE 		sw	a5,-20(s0)
+  78:../src/loader.c **** 	src_ptr_end = (unsigned int *)((&_cp_data_end));
+ 145              		.loc 1 78 14
+ 146 0068 97070000 		lla	a5,_cp_data_end
+ 146      93870700 
+ 147 0070 2322F4FE 		sw	a5,-28(s0)
+  79:../src/loader.c **** 	dst_ptr = (unsigned int *)(&_sdata);
+ 148              		.loc 1 79 10
+ 149 0074 97070000 		lla	a5,_sdata
+ 149      93870700 
+ 150 007c 2324F4FE 		sw	a5,-24(s0)
+ 151              	.L13:
+  80:../src/loader.c **** 
+  81:../src/loader.c **** 	while(1)
+  82:../src/loader.c **** 	{
+  83:../src/loader.c **** 		*dst_ptr = *src_ptr;
+ 152              		.loc 1 83 14
+ 153 0080 8327C4FE 		lw	a5,-20(s0)
+ 154 0084 9843     		lw	a4,0(a5)
+ 155              		.loc 1 83 12
+ 156 0086 832784FE 		lw	a5,-24(s0)
+ 157 008a 98C3     		sw	a4,0(a5)
+  84:../src/loader.c **** 		if(src_ptr == src_ptr_end)
+ 158              		.loc 1 84 5
+ 159 008c 0327C4FE 		lw	a4,-20(s0)
+ 160 0090 832744FE 		lw	a5,-28(s0)
+ 161 0094 630DF700 		beq	a4,a5,.L17
+  85:../src/loader.c **** 		{
+  86:../src/loader.c **** 			break;
+  87:../src/loader.c **** 		}
+  88:../src/loader.c **** 		dst_ptr++;
+ 162              		.loc 1 88 10
+ 163 0098 832784FE 		lw	a5,-24(s0)
+ 164 009c 9107     		addi	a5,a5,4
+ 165 009e 2324F4FE 		sw	a5,-24(s0)
+  89:../src/loader.c **** 		src_ptr++;
+ 166              		.loc 1 89 10
+ 167 00a2 8327C4FE 		lw	a5,-20(s0)
+ 168 00a6 9107     		addi	a5,a5,4
+ 169 00a8 2326F4FE 		sw	a5,-20(s0)
+  83:../src/loader.c **** 		if(src_ptr == src_ptr_end)
+ 170              		.loc 1 83 12
+ 171 00ac D1BF     		j	.L13
+ 172              	.L17:
+  86:../src/loader.c **** 		}
+ 173              		.loc 1 86 4
+ 174 00ae 0100     		nop
+  90:../src/loader.c **** 	}
+  91:../src/loader.c **** 
+  92:../src/loader.c **** 
+  93:../src/loader.c **** 	__asm__ __volatile__("la t3, _vstext");
+ 175              		.loc 1 93 2
+ 176              	 #APP
+ 177              	# 93 "../src/loader.c" 1
+  94              		__asm__ __volatile__("jr t3");
+ 178              		la t3, _vstext
+ 179              	# 0 "" 2
+ 180              		.loc 1 94 2
+ 181              	# 94 "../src/loader.c" 1
+  95              	}
+ 182              		jr t3
+ 183              	# 0 "" 2
+ 184              		.loc 1 95 1
+ 185              	 #NO_APP
+ 186 00ba 0100     		nop
+ 187 00bc F240     		lw	ra,28(sp)
+ 188              		.cfi_restore 1
+ 189 00be 6244     		lw	s0,24(sp)
+ 190              		.cfi_restore 8
+ 191              		.cfi_def_cfa 2, 32
+ 192 00c0 0561     		addi	sp,sp,32
+ 193              		.cfi_def_cfa_offset 0
+ 194 00c2 8280     		jr	ra
+ 195              		.cfi_endproc
+ 196              	.LFE4:
+ 198              		.text
+ 199              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 loader.c
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:14     .btsec:00000000 boot
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:18     .btsec:00000000 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:19     .btsec:00000000 $xrv32i2p1_m2p0_c2p0_zicsr2p0_zmmul1p0
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:19     .btsec:00000000 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:20     .btsec:00000002 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:23     .btsec:00000006 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:24     .btsec:00000006 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:26     .btsec:00000008 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:28     .btsec:00000008 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:31     .btsec:00000014 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:34     .btsec:00000020 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:37     .btsec:0000002c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:42     .btsec:0000003a .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:48     .btsec:00000048 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:51     .btsec:0000004e .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:54     .btsec:00000054 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:58     .btsec:00000060 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:62     .btsec:0000006a .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:66     .btsec:00000074 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:69     .btsec:00000076 .L0 
+     ../src/loader.c:48     .btsec:00000078 .L0 
+     ../src/loader.c:49     .btsec:00000080 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:81     .btsec:00000082 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:83     .btsec:00000086 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:85     .btsec:00000088 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:86     .btsec:00000088 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:88     .btsec:0000008a .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:90     .btsec:0000008c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:97     .ldsec:00000000 loader
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:100    .ldsec:00000000 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:101    .ldsec:00000000 $xrv32i2p1_m2p0_c2p0_zicsr2p0_zmmul1p0
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:101    .ldsec:00000000 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:102    .ldsec:00000002 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:105    .ldsec:00000006 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:106    .ldsec:00000006 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:108    .ldsec:00000008 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:110    .ldsec:00000008 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:113    .ldsec:00000014 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:116    .ldsec:00000020 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:120    .ldsec:0000002c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:123    .ldsec:00000032 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:126    .ldsec:00000038 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:130    .ldsec:00000044 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:134    .ldsec:0000004e .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:138    .ldsec:00000058 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:141    .ldsec:0000005a .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:143    .ldsec:0000005c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:146    .ldsec:00000068 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:149    .ldsec:00000074 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:153    .ldsec:00000080 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:156    .ldsec:00000086 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:159    .ldsec:0000008c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:163    .ldsec:00000098 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:167    .ldsec:000000a2 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:171    .ldsec:000000ac .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:174    .ldsec:000000ae .L0 
+     ../src/loader.c:93     .ldsec:000000b0 .L0 
+     ../src/loader.c:94     .ldsec:000000b8 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:186    .ldsec:000000ba .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:188    .ldsec:000000be .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:190    .ldsec:000000c0 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:191    .ldsec:000000c0 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:193    .ldsec:000000c2 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:195    .ldsec:000000c4 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:603    .debug_line_str:00000037 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:603    .debug_line_str:0000005e .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:603    .debug_line_str:00000065 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:603    .debug_line_str:0000006e .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:93     .btsec:0000008c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:198    .ldsec:000000c4 .L0 
+                     .debug_frame:00000000 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:28     .btsec:00000008 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:31     .btsec:00000014 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:34     .btsec:00000020 .L0 
+     ../src/loader.c:48     .btsec:00000078 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:67     .btsec:00000076 .L6
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:46     .btsec:00000048 .L4
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:110    .ldsec:00000008 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:113    .ldsec:00000014 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:116    .ldsec:00000020 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:143    .ldsec:0000005c .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:146    .ldsec:00000068 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:149    .ldsec:00000074 .L0 
+     ../src/loader.c:93     .ldsec:000000b0 .L0 
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:139    .ldsec:0000005a .L16
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:118    .ldsec:0000002c .L10
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:172    .ldsec:000000ae .L17
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:151    .ldsec:00000080 .L13
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:367    .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:553    .debug_str:0000002a .LASF25
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:598    .debug_line_str:00000000 .LASF0
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:600    .debug_line_str:00000010 .LASF1
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:533    .debug_rnglists:0000000c .LLRL0
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:543    .debug_line:00000000 .Ldebug_line0
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:583    .debug_str:000001c1 .LASF2
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:565    .debug_str:00000161 .LASF3
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:591    .debug_str:000001ef .LASF4
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:581    .debug_str:000001ae .LASF5
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:575    .debug_str:00000195 .LASF6
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:555    .debug_str:00000113 .LASF7
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:545    .debug_str:00000000 .LASF8
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:557    .debug_str:00000125 .LASF9
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:549    .debug_str:00000016 .LASF10
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:587    .debug_str:000001d7 .LASF11
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:563    .debug_str:0000015c .LASF12
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:571    .debug_str:00000181 .LASF26
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:98     .ldsec:00000000 .LFB4
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:196    .ldsec:000000c4 .LFE4
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:593    .debug_str:000001f9 .LASF13
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:573    .debug_str:00000188 .LASF14
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:547    .debug_str:0000000e .LASF15
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:595    .debug_str:00000208 .LASF16
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:567    .debug_str:0000016f .LASF17
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:551    .debug_str:00000023 .LASF18
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:577    .debug_str:0000019e .LASF19
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:589    .debug_str:000001e3 .LASF20
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:579    .debug_str:000001a6 .LASF21
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:569    .debug_str:0000017c .LASF27
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:15     .btsec:00000000 .LFB3
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:91     .btsec:0000008c .LFE3
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:561    .debug_str:0000014b .LASF22
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:559    .debug_str:0000013c .LASF23
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:585    .debug_str:000001cd .LASF24
+C:\Users\RENASH~1\AppData\Local\Temp\ccXbPjGF.s:201    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_lma_ldsec_start
+_lma_ldsec_end
+_vsloader
+_cp_text_start
+_cp_text_end
+_vstext
+_cp_data_start
+_cp_data_end
+_sdata

@@ -1,0 +1,32 @@
+/*
+ * std_protocol_hal.h
+ *
+ *  Created on: 8 ���. 2024 �.
+ *      Author: Viacheslav
+ */
+
+#ifndef STDPROTOCOL_STD_PROTOCOL_HAL_H_
+#define STDPROTOCOL_STD_PROTOCOL_HAL_H_
+
+/*******************************************
+ * Includes
+ ******************************************/
+#include <stdint.h>
+#include <stdbool.h>
+
+#define STD_SPI_DEVICE_ID 		XPAR_PS7_SPI_1_DEVICE_ID
+#define STD_SPI_INTERRUPT_ID 	XPAR_PS7_SPI_1_INTR
+#define PRIORITY_STD_SPI		8
+
+uint32_t STD_SPI_Init       (void);
+uint16_t STD_SPI_Read       (void);
+void     STD_SPI_Write      (uint16_t data);
+bool     STD_SPI_HaveData   (void);
+bool     STD_SPI_CanTransmit(void);
+
+void STD_Timer_Init	(uint32_t val);
+void STD_Timer_Start(void);
+void STD_Timer_Stop	(void);
+
+
+#endif /* STDPROTOCOL_STD_PROTOCOL_HAL_H_ */

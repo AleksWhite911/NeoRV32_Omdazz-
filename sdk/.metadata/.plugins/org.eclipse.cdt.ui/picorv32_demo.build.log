@@ -1,0 +1,12 @@
+13:42:31 **** Incremental Build of configuration Debug for project picorv32_demo ****
+make all 
+Invoking: GNU RISC-V Cross Print Size
+riscv-none-elf-size --format=berkeley --totals "picorv32_demo.elf"
+   text	   data	    bss	    dec	    hex	filename
+   7520	    100	    112	   7732	   1e34	picorv32_demo.elf
+   7520	    100	    112	   7732	   1e34	(TOTALS)
+Finished building: picorv32_demo.siz
+ 
+
+13:42:31 Build Finished. 0 errors, 0 warnings. (took 138ms)
+

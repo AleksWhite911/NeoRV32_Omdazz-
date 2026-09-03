@@ -1,0 +1,160 @@
+23:00:48 **** Incremental Build of configuration Debug for project neorv32_demo ****
+make all 
+Building file: ../src/main.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="src/main.o.lst" -MMD -MP -MF"src/main.d" -MT"src/main.o" -c -o "src/main.o" "../src/main.c"
+Finished building: ../src/main.c
+ 
+Building file: ../lib/source/i2c_driver.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/i2c_driver.o.lst" -MMD -MP -MF"lib/source/i2c_driver.d" -MT"lib/source/i2c_driver.o" -c -o "lib/source/i2c_driver.o" "../lib/source/i2c_driver.c"
+Finished building: ../lib/source/i2c_driver.c
+ 
+Building file: ../lib/source/init_module.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/init_module.o.lst" -MMD -MP -MF"lib/source/init_module.d" -MT"lib/source/init_module.o" -c -o "lib/source/init_module.o" "../lib/source/init_module.c"
+Finished building: ../lib/source/init_module.c
+ 
+Building file: ../lib/source/neorv32_aux.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_aux.o.lst" -MMD -MP -MF"lib/source/neorv32_aux.d" -MT"lib/source/neorv32_aux.o" -c -o "lib/source/neorv32_aux.o" "../lib/source/neorv32_aux.c"
+Finished building: ../lib/source/neorv32_aux.c
+ 
+Building file: ../lib/source/neorv32_cfs.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_cfs.o.lst" -MMD -MP -MF"lib/source/neorv32_cfs.d" -MT"lib/source/neorv32_cfs.o" -c -o "lib/source/neorv32_cfs.o" "../lib/source/neorv32_cfs.c"
+Finished building: ../lib/source/neorv32_cfs.c
+ 
+Building file: ../lib/source/neorv32_clint.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_clint.o.lst" -MMD -MP -MF"lib/source/neorv32_clint.d" -MT"lib/source/neorv32_clint.o" -c -o "lib/source/neorv32_clint.o" "../lib/source/neorv32_clint.c"
+Finished building: ../lib/source/neorv32_clint.c
+ 
+Building file: ../lib/source/neorv32_cpu.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_cpu.o.lst" -MMD -MP -MF"lib/source/neorv32_cpu.d" -MT"lib/source/neorv32_cpu.o" -c -o "lib/source/neorv32_cpu.o" "../lib/source/neorv32_cpu.c"
+Finished building: ../lib/source/neorv32_cpu.c
+ 
+Building file: ../lib/source/neorv32_dma.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_dma.o.lst" -MMD -MP -MF"lib/source/neorv32_dma.d" -MT"lib/source/neorv32_dma.o" -c -o "lib/source/neorv32_dma.o" "../lib/source/neorv32_dma.c"
+Finished building: ../lib/source/neorv32_dma.c
+ 
+Building file: ../lib/source/neorv32_gpio.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_gpio.o.lst" -MMD -MP -MF"lib/source/neorv32_gpio.d" -MT"lib/source/neorv32_gpio.o" -c -o "lib/source/neorv32_gpio.o" "../lib/source/neorv32_gpio.c"
+Finished building: ../lib/source/neorv32_gpio.c
+ 
+Building file: ../lib/source/neorv32_gptmr.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_gptmr.o.lst" -MMD -MP -MF"lib/source/neorv32_gptmr.d" -MT"lib/source/neorv32_gptmr.o" -c -o "lib/source/neorv32_gptmr.o" "../lib/source/neorv32_gptmr.c"
+Finished building: ../lib/source/neorv32_gptmr.c
+ 
+Building file: ../lib/source/neorv32_neoled.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_neoled.o.lst" -MMD -MP -MF"lib/source/neorv32_neoled.d" -MT"lib/source/neorv32_neoled.o" -c -o "lib/source/neorv32_neoled.o" "../lib/source/neorv32_neoled.c"
+Finished building: ../lib/source/neorv32_neoled.c
+ 
+Building file: ../lib/source/neorv32_newlib.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_newlib.o.lst" -MMD -MP -MF"lib/source/neorv32_newlib.d" -MT"lib/source/neorv32_newlib.o" -c -o "lib/source/neorv32_newlib.o" "../lib/source/neorv32_newlib.c"
+Finished building: ../lib/source/neorv32_newlib.c
+ 
+Building file: ../lib/source/neorv32_onewire.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_onewire.o.lst" -MMD -MP -MF"lib/source/neorv32_onewire.d" -MT"lib/source/neorv32_onewire.o" -c -o "lib/source/neorv32_onewire.o" "../lib/source/neorv32_onewire.c"
+Finished building: ../lib/source/neorv32_onewire.c
+ 
+Building file: ../lib/source/neorv32_pwm.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_pwm.o.lst" -MMD -MP -MF"lib/source/neorv32_pwm.d" -MT"lib/source/neorv32_pwm.o" -c -o "lib/source/neorv32_pwm.o" "../lib/source/neorv32_pwm.c"
+Finished building: ../lib/source/neorv32_pwm.c
+ 
+Building file: ../lib/source/neorv32_rte.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_rte.o.lst" -MMD -MP -MF"lib/source/neorv32_rte.d" -MT"lib/source/neorv32_rte.o" -c -o "lib/source/neorv32_rte.o" "../lib/source/neorv32_rte.c"
+Finished building: ../lib/source/neorv32_rte.c
+ 
+Building file: ../lib/source/neorv32_sdi.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_sdi.o.lst" -MMD -MP -MF"lib/source/neorv32_sdi.d" -MT"lib/source/neorv32_sdi.o" -c -o "lib/source/neorv32_sdi.o" "../lib/source/neorv32_sdi.c"
+Finished building: ../lib/source/neorv32_sdi.c
+ 
+Building file: ../lib/source/neorv32_semihosting.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_semihosting.o.lst" -MMD -MP -MF"lib/source/neorv32_semihosting.d" -MT"lib/source/neorv32_semihosting.o" -c -o "lib/source/neorv32_semihosting.o" "../lib/source/neorv32_semihosting.c"
+Finished building: ../lib/source/neorv32_semihosting.c
+ 
+Building file: ../lib/source/neorv32_slink.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_slink.o.lst" -MMD -MP -MF"lib/source/neorv32_slink.d" -MT"lib/source/neorv32_slink.o" -c -o "lib/source/neorv32_slink.o" "../lib/source/neorv32_slink.c"
+Finished building: ../lib/source/neorv32_slink.c
+ 
+Building file: ../lib/source/neorv32_smp.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_smp.o.lst" -MMD -MP -MF"lib/source/neorv32_smp.d" -MT"lib/source/neorv32_smp.o" -c -o "lib/source/neorv32_smp.o" "../lib/source/neorv32_smp.c"
+Finished building: ../lib/source/neorv32_smp.c
+ 
+Building file: ../lib/source/neorv32_spi.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_spi.o.lst" -MMD -MP -MF"lib/source/neorv32_spi.d" -MT"lib/source/neorv32_spi.o" -c -o "lib/source/neorv32_spi.o" "../lib/source/neorv32_spi.c"
+Finished building: ../lib/source/neorv32_spi.c
+ 
+Building file: ../lib/source/neorv32_tracer.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_tracer.o.lst" -MMD -MP -MF"lib/source/neorv32_tracer.d" -MT"lib/source/neorv32_tracer.o" -c -o "lib/source/neorv32_tracer.o" "../lib/source/neorv32_tracer.c"
+Finished building: ../lib/source/neorv32_tracer.c
+ 
+Building file: ../lib/source/neorv32_trng.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_trng.o.lst" -MMD -MP -MF"lib/source/neorv32_trng.d" -MT"lib/source/neorv32_trng.o" -c -o "lib/source/neorv32_trng.o" "../lib/source/neorv32_trng.c"
+Finished building: ../lib/source/neorv32_trng.c
+ 
+Building file: ../lib/source/neorv32_twd.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_twd.o.lst" -MMD -MP -MF"lib/source/neorv32_twd.d" -MT"lib/source/neorv32_twd.o" -c -o "lib/source/neorv32_twd.o" "../lib/source/neorv32_twd.c"
+Finished building: ../lib/source/neorv32_twd.c
+ 
+Building file: ../lib/source/neorv32_twi.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_twi.o.lst" -MMD -MP -MF"lib/source/neorv32_twi.d" -MT"lib/source/neorv32_twi.o" -c -o "lib/source/neorv32_twi.o" "../lib/source/neorv32_twi.c"
+Finished building: ../lib/source/neorv32_twi.c
+ 
+Building file: ../lib/source/neorv32_uart.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_uart.o.lst" -MMD -MP -MF"lib/source/neorv32_uart.d" -MT"lib/source/neorv32_uart.o" -c -o "lib/source/neorv32_uart.o" "../lib/source/neorv32_uart.c"
+Finished building: ../lib/source/neorv32_uart.c
+ 
+Building file: ../lib/source/neorv32_wdt.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/neorv32_wdt.o.lst" -MMD -MP -MF"lib/source/neorv32_wdt.d" -MT"lib/source/neorv32_wdt.o" -c -o "lib/source/neorv32_wdt.o" "../lib/source/neorv32_wdt.c"
+Finished building: ../lib/source/neorv32_wdt.c
+ 
+Building file: ../lib/source/utility.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include" -I"C:\QuartusPrj\Omdazz\sdk\neorv32_demo\src" -std=gnu11 -Wa,-adhlns="lib/source/utility.o.lst" -MMD -MP -MF"lib/source/utility.d" -MT"lib/source/utility.o" -c -o "lib/source/utility.o" "../lib/source/utility.c"
+Finished building: ../lib/source/utility.c
+ 
+Building target: neorv32_demo.elf
+Invoking: GNU RISC-V Cross C Linker
+riscv-none-elf-gcc -march=rv32i_zicsr_zifencei -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g3 -T "C:\QuartusPrj\Omdazz\sdk\neorv32_demo\neorv32.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"neorv32_demo.map" -mcmodel=medany -o "neorv32_demo.elf" ./src/main.o  ./lib/source/i2c_driver.o ./lib/source/init_module.o ./lib/source/neorv32_aux.o ./lib/source/neorv32_cfs.o ./lib/source/neorv32_clint.o ./lib/source/neorv32_cpu.o ./lib/source/neorv32_dma.o ./lib/source/neorv32_gpio.o ./lib/source/neorv32_gptmr.o ./lib/source/neorv32_neoled.o ./lib/source/neorv32_newlib.o ./lib/source/neorv32_onewire.o ./lib/source/neorv32_pwm.o ./lib/source/neorv32_rte.o ./lib/source/neorv32_sdi.o ./lib/source/neorv32_semihosting.o ./lib/source/neorv32_slink.o ./lib/source/neorv32_smp.o ./lib/source/neorv32_spi.o ./lib/source/neorv32_tracer.o ./lib/source/neorv32_trng.o ./lib/source/neorv32_twd.o ./lib/source/neorv32_twi.o ./lib/source/neorv32_uart.o ./lib/source/neorv32_wdt.o ./lib/source/utility.o  ./crt0.o   
+Finished building target: neorv32_demo.elf
+ 
+Invoking: GNU RISC-V Cross Create Flash Image
+riscv-none-elf-objcopy -O binary -j .text -j .data -j.irqsec -j.ldsec -j.btsec "neorv32_demo.elf"  "neorv32_demo.bin"
+Finished building: neorv32_demo.bin
+ 
+Invoking: GNU RISC-V Cross Create Listing
+riscv-none-elf-objdump --source --all-headers --demangle --line-numbers --wide "neorv32_demo.elf" > "neorv32_demo.lst"
+Finished building: neorv32_demo.lst
+ 
+Invoking: GNU RISC-V Cross Print Size
+riscv-none-elf-size --format=berkeley --totals "neorv32_demo.elf"
+   text	   data	    bss	    dec	    hex	filename
+  14020	     32	    276	  14328	   37f8	neorv32_demo.elf
+  14020	     32	    276	  14328	   37f8	(TOTALS)
+Finished building: neorv32_demo.siz
+ 
+
+23:00:51 Build Finished. 0 errors, 0 warnings. (took 3s.110ms)
+

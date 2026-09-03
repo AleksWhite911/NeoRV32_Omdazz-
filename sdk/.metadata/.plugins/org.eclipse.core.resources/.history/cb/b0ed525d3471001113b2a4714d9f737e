@@ -1,0 +1,675 @@
+/*
+ * std_protocol_app.c
+ *
+ *  Created on: 8 ���. 2024 �.
+ *      Author: Viacheslav
+ */
+/***************************** Include Files ********************************/
+#include "std_protocol_app.h"
+/************************** Variable Definitions ****************************/
+/*******************************************
+Declare instance and associated pointer for
+ ******************************************/
+stdChannel_s stdChSpi;
+
+/*******************************************
+ * Private function prototypes
+ ******************************************/
+bool     Ch_HaveData   (void);
+uint16_t Ch_GetData    (void);
+bool     Ch_CanTransmit(void);
+void     Ch_PutData    (uint16_t data);
+void     Ch_RunCommand (uint16_t cmd, uint16_t *rxData, uint16_t *txData);
+void     STD_TimerInit (uint32_t value);
+void     STD_TimerStart(void);
+void     STD_TimerStop (void);
+
+/*******************************************
+ * Initialization external communication
+ ******************************************/
+void STD_Protocol_Setup(void) {
+    stdChSpi.data_size       = STD_DATA_SIZE_8_BIT;
+
+    stdChSpi.STD_HaveData    = STD_SPI_HaveData;
+    stdChSpi.STD_GetData     = STD_SPI_Read;
+    stdChSpi.STD_CanTransmit = STD_SPI_CanTransmit;
+    stdChSpi.STD_PutData     = STD_SPI_Write;
+    stdChSpi.STD_Run         = Ch_RunCommand;
+
+
+    stdChSpi.STD_TimerInit   = STD_TimerInit;
+    stdChSpi.STD_TimerStart  = STD_TimerStart;
+    stdChSpi.STD_TimerStop   = STD_TimerStop;
+    stdChSpi.timeout_value   = STD_TIMER_LOAD_VALUE;
+    stdChSpi.timer_en        = false;
+
+    STD_Init(&stdChSpi);
+}
+/*******************************************
+ * Run STD Protocol
+ ******************************************/
+int  STD_Protocol_Run(void){
+    int Status;
+
+    Status = STD_SPI_Init();
+	STD_Protocol_Setup();
+
+	//STD_TimerInit(STD_TIMER_LOAD_VALUE);			//STD_Protocol_Setup
+	//STD_TimerStart();
+
+	return Status;
+}
+/*******************************************
+ * STD_Process Handler
+ ******************************************/
+void STD_Handler(void){
+
+	STD_Process(&stdChSpi);
+}
+/*******************************************
+ * Initialization timer
+ ******************************************/
+void STD_TimerInit(uint32_t value) {
+	STD_Timer_Init(value);
+}
+
+/*******************************************
+ * Start timer
+ ******************************************/
+void STD_TimerStart(void) {
+	//SCU_Timer_Start();
+
+}
+
+/*******************************************
+ * Stop timer
+ ******************************************/
+void STD_TimerStop(void) {
+	//SCU_Timer_Stop();
+}
+
+
+/*******************************************
+ * HaveData function
+ ******************************************/
+bool Ch_HaveData(void) {
+    bool status = true;
+    status = STD_SPI_HaveData();
+    return status;
+}
+
+/*******************************************
+ * GetData function
+ ******************************************/
+uint16_t Ch_GetData(void) {
+    uint16_t data = 0;
+    data = STD_SPI_Read();
+    return data;
+}
+
+/*******************************************
+ * CanTransmit function
+ ******************************************/
+bool Ch_CanTransmit(void) {
+    bool status = true;
+    status = STD_SPI_CanTransmit();
+    return status;
+}
+
+/*******************************************
+ * PutData function
+ ******************************************/
+void Ch_PutData(uint16_t data) {
+	STD_SPI_Write(data);
+}
+
+/*******************************************
+ * Run function for channel communication
+ ******************************************/
+void Ch_RunCommand(uint16_t cmd, uint16_t *rxData, uint16_t *txData) {
+    switch (cmd) {
+        case STD_CMDID_GETID : {
+            uint32_t id;
+
+            std_action_getid(&id);
+
+            txData[0] = (id >>  0) & 0xffff;
+            txData[1] = (id >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_SETID : {
+            uint32_t id = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+
+            std_action_setid(&id);
+        } break;
+
+        case STD_CMDID_UID : {
+            std_action_uid(txData);
+        } break;
+
+        case STD_CMDID_RDREL : {
+            uint32_t addr  = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint16_t count = rxData[2];
+
+            std_action_rdrel(addr, count, txData);
+        } break;
+
+        case STD_CMDID_WRREL : {
+            uint32_t addr  = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint16_t count = rxData[2];
+
+            std_action_wrrel(addr, count, &rxData[3]);
+        } break;
+
+        case STD_CMDID_RDABS : {
+            uint32_t addr = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint32_t data;
+
+            std_action_rdabs(addr, &data);
+
+            txData[0] = (data >>  0) & 0xffff;
+            txData[1] = (data >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_WRABS : {
+            uint32_t addr = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint32_t data = ( (uint32_t)(rxData[3]) << 16 ) | rxData[2];
+
+            std_action_wrabs(addr, data);
+        } break;
+
+        case STD_CMDID_DEVVER : {
+            uint64_t version;
+
+            std_action_devver(&version);
+
+            txData[0] = (version >>  0) & 0xffff;
+            txData[1] = (version >> 16) & 0xffff;
+            txData[2] = (version >> 32) & 0xffff;
+            txData[3] = (version >> 48) & 0xffff;
+        } break;
+
+        case STD_CMDID_PRTVER : {
+        } break;
+
+        case STD_CMDID_FTRANS : {
+            std_action_ftrans(rxData, txData);
+        } break;
+
+        case STD_CMDID_STRANS : {
+            std_action_strans(rxData[0], rxData[1], &rxData[2], txData);
+        } break;
+
+        case STD_CMDID_STAT : {
+            uint32_t status;
+
+            std_action_stat(&status);
+
+            txData[0] = (status >>  0) & 0xffff;
+            txData[1] = (status >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_GETOSC : {
+            uint32_t osc_state;
+
+            std_action_getosc(&osc_state);
+
+            txData[0] = (osc_state >>  0) & 0xffff;
+            txData[1] = (osc_state >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_SETOSC : {
+            uint32_t mask  = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint32_t state = ( (uint32_t)(rxData[3]) << 16 ) | rxData[2];
+
+            std_action_setosc(mask, state);
+        } break;
+
+        case STD_CMDID_TEMP : {
+            uint32_t temp;
+
+            std_action_temp(rxData[0], &temp);
+
+            txData[0] = (temp >>  0) & 0xffff;
+            txData[1] = (temp >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_PWRSEL : {
+            uint32_t mask  = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint32_t state = ( (uint32_t)(rxData[3]) << 16 ) | rxData[2];
+
+            std_action_pwrsel(mask, state);
+        } break;
+
+        case STD_CMDID_GETATT: {
+            uint16_t att_num = rxData[0];
+            uint16_t value;
+
+            std_action_getatt(att_num, &value);
+
+            txData[0] = value;
+        } break;
+
+        case STD_CMDID_SETATT: {
+            uint16_t att_num = rxData[0];
+            uint16_t value   = rxData[1];
+
+            std_action_setatt(att_num, value);
+        } break;
+
+        case STD_CMDID_GETCHDAT : {
+            uint16_t channel;
+
+            std_action_getchdat(&channel);
+
+            txData[0] = channel;
+        } break;
+
+        case STD_CMDID_SETCHDAT : {
+            uint16_t channel = rxData[0];
+
+            std_action_setchdat(channel);
+        } break;
+
+        case STD_CMDID_UPDDELAY : {
+            uint32_t delay = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+
+            std_action_upddelay(delay);
+        } break;
+
+        case STD_CMDID_ACTCTRL: {
+            uint16_t act_num = rxData[0];
+            uint16_t state   = rxData[1];
+
+            std_action_actctrl(act_num, state);
+        } break;
+
+        case STD_CMDID_OUTEN : {
+            uint32_t mask  = ( (uint32_t)(rxData[1]) << 16 ) | rxData[0];
+            uint32_t state = ( (uint32_t)(rxData[3]) << 16 ) | rxData[2];
+
+            std_action_outen(mask, state);
+        } break;
+
+        case STD_CMDID_SIGEN : {										//   SIGEN
+            uint16_t sig_num = rxData[0];
+            uint16_t state   = rxData[1];
+
+            std_action_sigen(sig_num, state);
+        } break;
+
+        case STD_CMDID_GETDACRSL: {
+            uint16_t dac_num = rxData[0];
+            uint16_t resolusion;
+
+            std_action_getdacrsl(dac_num, &resolusion);
+
+            txData[0] = resolusion;
+        } break;
+
+        case STD_CMDID_SETDACVAL: {
+            uint16_t dac_num = rxData[0];
+            uint32_t value   = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_setdacval(dac_num, value);
+        } break;
+
+        case STD_CMDID_DACOES: {
+            uint16_t dac_num   = rxData[0];
+            uint32_t out_state = rxData[1];
+
+            std_action_dacoes(dac_num, out_state);
+        } break;
+
+        case STD_CMDID_SETDACRAMP: {
+            uint16_t dac_num = rxData[0];
+            uint32_t value   = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+            uint16_t step    = rxData[3];
+
+            std_action_setdacramp(dac_num, value, step);
+        } break;
+
+        case STD_CMDID_SETRFCHN: {
+            uint16_t channel = rxData[0];
+
+            std_action_setrfchn(channel);
+        } break;
+
+        case STD_CMDID_SETRFCHF: {
+            uint16_t freq = rxData[0];
+
+            std_action_setrfchf(freq);
+        } break;
+
+        case STD_CMDID_SETSW: {
+            uint16_t sw = rxData[0];
+            uint16_t ch = rxData[1];
+
+            std_action_setsw(sw, ch);
+        } break;
+
+        case STD_CMDID_GETRFCHN: {
+            uint16_t channel;
+
+            std_action_getrfchn(&channel);
+
+            txData[0] = channel;
+        } break;
+
+        case STD_CMDID_GETRFCHF: {
+            uint16_t freq_start, freq_stop;
+
+            std_action_getrfchf(&freq_start, &freq_stop);
+
+            txData[0] = freq_start;
+            txData[1] = freq_stop;
+        } break;
+
+        case STD_CMDID_SETFREQ: {								// SETFREQ
+            uint16_t sig_id = rxData[0];
+            uint64_t freq   = 0;
+
+            for (uint16_t i = 4; i > 0; i--) {
+                freq <<= 16;
+                freq |= rxData[i];
+            }
+
+            std_action_setfreq(sig_id, freq);
+        } break;
+
+        case STD_CMDID_SETPOW : {
+            uint16_t sig_id = rxData[0];
+            uint16_t pow    = rxData[1];
+
+            std_action_setpow(sig_id, pow);
+        } break;
+
+        case STD_CMDID_GETFREQ : {
+            uint16_t sig_id = rxData[0];
+            uint64_t freq;
+
+            std_action_getfreq(sig_id, &freq);
+
+            txData[0] = (freq >>  0) & 0xffff;
+            txData[1] = (freq >> 16) & 0xffff;
+            txData[2] = (freq >> 32) & 0xffff;
+            txData[3] = (freq >> 48) & 0xffff;
+        } break;
+
+        case STD_CMDID_GETPOW : {
+            uint16_t sig_id = rxData[0];
+            uint16_t pow;
+
+            std_action_getpow(sig_id, &pow);
+
+            txData[0] = pow;
+        } break;
+
+        case STD_CMDID_MODVIEW: {
+            uint16_t sig_id = rxData[0];
+            uint16_t view   = rxData[1];
+
+            std_action_modview(sig_id, view);
+        } break;
+
+        case STD_CMDID_MODFORM: {
+            uint16_t sig_id = rxData[0];
+            uint16_t form   = rxData[1];
+
+            std_action_modform(sig_id, form);
+        } break;
+
+        case STD_CMDID_SETDEPTH: {
+            uint16_t sig_id = rxData[0];
+            uint16_t depth  = rxData[1];
+
+            std_action_setdepth(sig_id, depth);
+        } break;
+
+        case STD_CMDID_SIGDELAY: {
+            uint16_t sig_id = rxData[0];
+            uint32_t delay  = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_sigdelay(sig_id, delay);
+        } break;
+
+        case STD_CMDID_SIGWIDTHPLS: {
+            uint16_t sig_id = rxData[0];
+            uint32_t width  = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_sigwidthpls(sig_id, width);
+        } break;
+
+        case STD_CMDID_SIGSOURCE: {
+            uint16_t sig_id = rxData[0];
+            uint16_t source = rxData[1];
+
+            std_action_sigsource(sig_id, source);
+        } break;
+
+        case STD_CMDID_SETDEVFR: {
+            uint16_t sig_id = rxData[0];
+            uint32_t freq   = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_setdevfr(sig_id, freq);
+        } break;
+
+        case STD_CMDID_SETDEVPH: {
+            uint16_t sig_id = rxData[0];
+            uint16_t phase  = rxData[1];
+
+            std_action_setdevph(sig_id, phase);
+        } break;
+
+        case STD_CMDID_GETADCVAL: {
+            uint16_t adc_num = rxData[0];
+            uint32_t value;
+
+            std_action_getadcval(adc_num, &value);
+
+            txData[0] = (value >>  0) & 0xffff;
+            txData[1] = (value >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_SIGWIDTHSQ: {
+            uint16_t sig_id = rxData[0];
+            uint32_t width  = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_sigwidthsq(sig_id, width);
+        } break;
+
+        case STD_CMDID_SIGWIDTHTR: {
+            uint16_t sig_id = rxData[0];
+            uint32_t width  = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_sigwidthtr(sig_id, width);
+        } break;
+
+        case STD_CMDID_SIGPLRT: {
+            uint16_t sig_id   = rxData[0];
+            uint16_t polarity = rxData[1];
+
+            std_action_sigplrt(sig_id, polarity);
+        } break;
+
+        case STD_CMDID_GETVOLTAGE: {
+            uint16_t sens_id = rxData[0];
+            uint32_t voltage;
+
+            std_action_getvoltage(sens_id, &voltage);
+
+            txData[0] = (voltage >>  0) & 0xffff;
+            txData[1] = (voltage >> 16) & 0xffff;
+       } break;
+
+        case STD_CMDID_GETCURRENT: {
+            uint16_t sens_id = rxData[0];
+            uint32_t current;
+
+            std_action_getcurrent(sens_id, &current);
+
+            txData[0] = (current >>  0) & 0xffff;
+            txData[1] = (current >> 16) & 0xffff;
+        } break;
+
+        case STD_CMDID_SETRGB: {
+            uint16_t led_num = rxData[0];
+            uint16_t red     = rxData[1];
+            uint16_t green   = rxData[2];
+            uint16_t blue    = rxData[3];
+
+            std_action_setrgb(led_num, red, green, blue);
+        } break;
+
+        case STD_CMDID_GETRGB: {
+            uint16_t led_num = rxData[0];
+            uint16_t red;
+            uint16_t green;
+            uint16_t blue;
+
+            std_action_getrgb(led_num, &red, &green, &blue);
+
+            txData[0] = red;
+            txData[1] = green;
+            txData[2] = blue;
+        } break;
+
+        case STD_CMDID_SETLEDBL: {
+            uint16_t led_num = rxData[0];
+            uint16_t period  = rxData[1];
+            uint16_t time    = rxData[2];
+
+            std_action_setledbl(led_num, period, time);
+        } break;
+
+        case STD_CMDID_GETLEDBL: {
+            uint16_t led_num = rxData[0];
+            uint16_t period;
+            uint16_t time;
+
+            std_action_getledbl(led_num, &period, &time);
+
+            txData[0] = period;
+            txData[1] = time;
+        } break;
+
+        case STD_CMDID_SETPHASE: {
+            uint16_t sig_id = rxData[0];
+            uint32_t phase  = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_setphase(sig_id, phase);
+        } break;
+
+        case STD_CMDID_UNLOCK: {
+            std_action_unlock();
+        } break;
+
+        case STD_CMDID_LOCK: {
+            std_action_lock();
+        } break;
+
+        case STD_CMDID_SETVOLTAGE: {
+            uint16_t sig_id  = rxData[0];
+            uint32_t voltage = ( (uint32_t)(rxData[2]) << 16 ) | rxData[1];
+
+            std_action_setvoltage(sig_id, voltage);
+        } break;
+
+        case STD_CMDID_SETFAN: {
+            uint16_t fan_id = rxData[0];
+            uint16_t speed  = rxData[1];
+
+            std_action_setfan(fan_id, speed);
+        } break;
+
+        case STD_CMDID_GETFAN: {
+            uint16_t fan_id = rxData[0];
+            uint16_t speed;
+
+            std_action_getfan(fan_id, &speed);
+
+            txData[0] = speed;
+        } break;
+
+        case STD_CMDID_GETRPM: {
+            uint16_t fan_id = rxData[0];
+            uint16_t rpm;
+
+            std_action_getrpm(fan_id, &rpm);
+
+            txData[0] = rpm;
+        } break;
+
+        case STD_CMDID_SETRFCHFHRES: {
+            uint64_t freq = 0;
+
+            for (int16_t i = 3; i >= 0; i--) {
+                freq <<= 16;
+                freq |= rxData[i];
+            }
+
+            std_action_setrfchfhres(freq);
+        } break;
+
+        case STD_CMDID_GETRFCHFHRES: {
+            uint64_t freq_start, freq_stop;
+
+            std_action_getrfchfhres(&freq_start, &freq_stop);
+
+            /* Frequency start */
+            txData[0] = (freq_start >>  0) & 0xffff;
+            txData[1] = (freq_start >> 16) & 0xffff;
+            txData[2] = (freq_start >> 32) & 0xffff;
+            txData[3] = (freq_start >> 48) & 0xffff;
+
+            /* Frequency stop */
+            txData[4] = (freq_stop >>  0) & 0xffff;
+            txData[5] = (freq_stop >> 16) & 0xffff;
+            txData[6] = (freq_stop >> 32) & 0xffff;
+            txData[7] = (freq_stop >> 48) & 0xffff;
+        } break;
+
+        case STD_CMDID_SENSCNT: {
+            uint16_t sens_type = rxData[0];
+            uint16_t sens_cnt;
+
+            std_action_senscnt(sens_type, &sens_cnt);
+
+            txData[0] = sens_cnt;
+        } break;
+
+        case STD_CMDID_GETDIGIPOT:{
+
+            uint16_t getval;
+
+            std_action_getdigpot(&getval);
+
+              txData[0] = getval;
+
+
+        }break;
+        case STD_CMDID_SETDIGIPOT:{
+
+        	uint16_t digpot =  rxData[0];
+        	std_action_setdigpot(digpot);
+
+        }break;
+        case STD_CMDID_GETDIGPOTMEM:{
+            uint16_t getval;
+
+            std_action_getemepot(&getval);
+
+              txData[0] = getval;
+        }break;
+        case STD_CMDID_SETDIGPOTMEM:{
+         	uint16_t emepot =  rxData[0];
+        	std_action_setemepot(emepot);
+        }break;
+
+        default: break;
+    }
+}
+
+/*******************************************
+ * End of file ext_communication.c
+ ******************************************/

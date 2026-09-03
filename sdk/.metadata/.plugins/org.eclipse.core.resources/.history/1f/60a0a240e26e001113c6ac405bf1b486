@@ -1,0 +1,50 @@
+// ================================================================================ //
+// The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32              //
+// Copyright (c) NEORV32 contributors.                                              //
+// Copyright (c) 2020 - 2026 Stephan Nolting. All rights reserved.                  //
+// Licensed under the BSD-3-Clause license, see LICENSE for details.                //
+// SPDX-License-Identifier: BSD-3-Clause                                            //
+// ================================================================================ //
+
+
+/**********************************************************************//**
+ * @file demo_cfu/main.c
+ * @brief Example program showing how to use the CFU's custom instructions
+ * (XTEA example). Take a look at the commented "hardware-counterpart" of
+ * this CFU example in 'rtl/core/neorv32_cpu_cp_cfu.vhd'.
+ **************************************************************************/
+#include <neorv32.h>
+
+
+/**********************************************************************//**
+ * @name User configuration
+ **************************************************************************/
+/**@{*/
+/** UART BAUD rate */
+/** Number of XTEA rounds */
+#define XTEA_ROUNDS 20
+/** Input data size (number of 32-bit words), has to be even */
+#define DATA_NUM    64
+/**@}*/
+/**********************************************************************//**
+ * Main function: run pure-SW XTEA and compare with HW-accelerated XTEA
+ *
+ * @note This program requires UART0 and the Xcfu and Zicntr ISA extension.
+ *
+ * @return 0 if execution was successful
+ **************************************************************************/
+int main() {
+
+  // initialize NEORV32 run-time environment
+  neorv32_rte_setup();
+  check_modules();
+  init_module();
+
+
+  while(1) {
+	  	  bool check_fifo = neorv32_sdi_rx_empty();
+		  if (!check_fifo && !neorv32_sdi_check_cs())
+			  neorv32_uart0_printf("Read data: 0x%x\n", (uint8_t)neorv32_sdi_get_byte());
+  }
+
+}

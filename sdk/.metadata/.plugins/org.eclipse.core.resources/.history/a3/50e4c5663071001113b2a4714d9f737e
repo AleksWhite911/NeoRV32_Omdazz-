@@ -1,0 +1,82 @@
+/*
+ * std_protocol_hal.c
+ *
+ *  Created on: 8 ���. 2024 �.
+ *      Author: Viacheslav
+ */
+/***************************** Include Files ********************************/
+
+#include "std_protocol_hal.h"
+/*******************************************
+ * The instance of the SPI device
+ ******************************************/
+/*---------------------------------------------------------------------------*/
+/*------------------------------- FUNCTIONS ---------------------------------*/
+/*--------------------------------------------*/
+/**/
+int STD_SPI_Init(void) {
+	uint32_t Status;
+	uint32_t irq_set = 1LL << SDI_CTRL_IRQ_RX_NEMPTY;
+	if (!status_struct.sdi) {
+		neorv32_uart0_printf("SDI init false!");
+		return false;
+	} else {
+		neorv32_sdi_setup(irq_set);
+		neorv32_rte_handler_install(SDI_TRAP_CODE, STD_Timer_Start);
+		neorv32_cpu_csr_set(CSR_MIE, 1 << SDI_FIRQ_ENABLE);
+		neorv32_cpu_csr_set(CSR_MSTATUS, 1 << CSR_MSTATUS_MIE);
+		neorv32_uart0_printf("SDI_Controller and interrupt init success!");
+	}
+}
+
+/*******************************************
+ * Read data from control SPI
+ ******************************************/
+uint16_t STD_SPI_Read(void) {
+    uint8_t  data;
+
+
+}
+
+/*******************************************
+ * Write data to control SPI
+ ******************************************/
+void STD_SPI_Write(uint16_t data) {
+	uint32_t controlReg;
+}
+
+/*******************************************
+ * Have receive data in control SPI?
+ ******************************************/
+bool STD_SPI_HaveData(void) {
+	if (!neorv32_sdi_rx_empty())
+		return true;
+	else
+		return false;
+}
+
+/*******************************************
+ * Can transmit data to control SPI?
+ ******************************************/
+bool STD_SPI_CanTransmit(void) {
+	if (!neorv32_sdi_check_cs()) {
+		return true;
+	}
+	else false;
+}
+
+/*---------------------------*/
+/*****************************/
+/*---------------------------*/
+
+void STD_Timer_Init(uint32_t val) {
+
+}
+
+void STD_Timer_Start(void) {
+
+}
+
+
+void STD_Timer_Stop(void) {
+}

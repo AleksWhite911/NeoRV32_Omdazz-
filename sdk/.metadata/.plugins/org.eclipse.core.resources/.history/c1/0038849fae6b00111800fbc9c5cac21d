@@ -1,0 +1,35 @@
+/*
+ * std_protocol_app.h
+ *
+ *  Created on: 8 ���. 2024 �.
+ *      Author: Viacheslav
+ */
+
+#ifndef APPLICATION_STDPROTOCOL_APP_STD_PROTOCOL_APP_H_
+#define APPLICATION_STDPROTOCOL_APP_STD_PROTOCOL_APP_H_
+
+/*******************************************
+ * Includes
+ ******************************************/
+#include "std_protocol.h"
+#include "std_protocol_actions.h"
+#include "std_protocol_hal.h"
+
+/*******************************************
+ * Public global variables
+ ******************************************/
+extern stdChannel_s stdChSpi;
+
+/*******************************************
+ * Public function prototypes
+ ******************************************/
+#define STD_TIMEOUT             (1000000UL)   /* uSec */
+#define STD_TIMER_LOAD_VALUE         (3330) /* 10 us */
+/*******************************************
+ * Public function prototypes
+ ******************************************/
+int  STD_Protocol_Run   (void);
+void STD_Protocol_Setup (void);
+void STD_Handler        (void);
+
+#endif /* APPLICATION_STDPROTOCOL_APP_STD_PROTOCOL_APP_H_ */

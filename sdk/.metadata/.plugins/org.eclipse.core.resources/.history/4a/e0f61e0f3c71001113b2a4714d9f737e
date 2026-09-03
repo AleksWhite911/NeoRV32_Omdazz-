@@ -1,0 +1,189 @@
+/*******************************************
+ * init_module.c
+ *
+ *  Created on: 19.06.2026 14:03:50
+ *      Author: Anatoly Alekseev <RenAshbell>
+ ******************************************/
+
+/*******************************************
+ * Includes
+ ******************************************/
+#include "init_module.h"
+
+
+
+/*******************************************
+ * Global variables
+ ******************************************/
+init_status_t status_struct;
+
+/**********************************************************************//**
+ * Check available periphery.
+ **************************************************************************/
+void check_modules(void) {
+
+#if (_UART_0_)
+	if (!neorv32_uart0_available()) {
+		status_struct.uart_0 = 0;
+	} else {
+		status_struct.uart_0 = 1;
+	}
+#endif
+
+#if (_UART_1_)
+	if (!neorv32_uart1_available()) {
+		status_struct.uart_1 = 0;
+	} else {
+		status_struct.uart_1 = 1;
+	}
+#endif
+
+#if (_CFS_)
+	if (!neorv32_cfs_available()) {
+		status_struct.custom_func = 0;
+	} else {
+		status_struct.custom_func = 1;
+	}
+#endif
+
+#if (_GPIO_)
+	if (!neorv32_gpio_available()) {
+		status_struct.gpio_block = 0;
+	} else {
+		status_struct.gpio_block = 1;
+	}
+#endif
+
+#if (_GPTMR_)
+	if (!neorv32_gptmr_available()) {
+		status_struct.general_timer = 0;
+	} else {
+		status_struct.general_timer = 1;
+	}
+#endif
+
+
+#if (_CLINT_)
+	if (!neorv32_clint_available()) {
+		status_struct.clint_module = 0;
+	} else {
+		status_struct.clint_module = 1;
+	}
+#endif
+
+#if (_DMA_)
+	if (!neorv32_dma_available()) {
+		status_struct.dma_block = 0;
+	} else {
+		status_struct.dma_block = 1;
+	}
+#endif
+
+#if (_NEOLED_)
+	if (!neorv32_neoled_available()) {
+		status_struct.neoled_block = 0;
+	} else {
+		status_struct.neoled_block = 1;
+	}
+#endif
+
+#if (_ONEWIRE_)
+	if (!neorv32_onewire_available()) {
+		status_struct.onewire_block = 0;
+	} else {
+		status_struct.onewire_block = 1;
+	}
+#endif
+
+#if (_PWM_)
+	if (!neorv32_pwm_available()) {
+		status_struct.pwm = 0;
+	} else {
+		status_struct.pwm = 1;
+	}
+#endif
+
+#if (_SDI_)
+	if (!neorv32_sdi_available()) {
+		status_struct.sdi = 0;
+	} else {
+		status_struct.sdi = 1;
+	}
+#endif
+
+#if (_SDI_STD_)
+	if (!neorv32_sdi_available()) {
+		status_struct.sdi_std_mode = 0;
+	} else {
+		status_struct.sdi_std_mode = 1;
+	}
+#endif
+
+#if (_SLINK_)
+	if (!neorv32_slink_available()) {
+		status_struct.slink = 0;
+	} else {
+		status_struct.slink = 1;
+	}
+#endif
+
+#if (_SPI_)
+	if (!neorv32_spi_available()) {
+		status_struct.spi = 0;
+	} else {
+		status_struct.spi = 1;
+	}
+#endif
+}
+
+
+bool init_module(void) {
+	neorv32_rte_setup();
+	//uint32_t irq_set = 1LL << SDI_CTRL_IRQ_RX_NEMPTY;
+
+	if (!status_struct.uart_0) {
+		return false;
+	} else {
+		neorv32_uart0_setup(BAUD_RATE, 0);
+		neorv32_uart0_printf("UART_0 - Init successful\n");
+	}
+
+	if (!status_struct.uart_1) {
+		neorv32_uart0_printf("UART_1 - Not implement \n");
+	} else {
+		neorv32_uart1_setup(BAUD_RATE, 0);
+		neorv32_uart0_printf("UART_1 - Init successful\n");
+	}
+
+
+	if (!status_struct.sdi) {
+		neorv32_uart0_printf("SDI init false!");
+		return false;
+	} else {
+		neorv32_sdi_setup(0);
+		neorv32_uart0_printf("SDI - Not implement or another mode SDI");
+	}
+
+	if (!status_struct.sdi_std_mode) {
+		neorv32_uart0_printf("SDI_STD - SDI_Controller is not implement!\n");
+	} else {
+		STD_Protocol_Run();
+	}
+
+	#if defined(SDI_INTERRUPT)
+		if (!status_struct.sdi) {
+			neorv32_uart0_printf("SDI init false!");
+			return false;
+		} else {
+			neorv32_sdi_setup(irq_set);
+			neorv32_rte_handler_install(SDI_TRAP_CODE, STD_Timer_Start);
+			neorv32_cpu_csr_set(CSR_MIE, 1 << SDI_FIRQ_ENABLE);
+			  neorv32_cpu_csr_set(CSR_MSTATUS, 1 << CSR_MSTATUS_MIE);
+			neorv32_uart0_printf("SDI_Controller and interrupt init success!");
+		}
+	#endif
+
+
+	return true;
+
+}

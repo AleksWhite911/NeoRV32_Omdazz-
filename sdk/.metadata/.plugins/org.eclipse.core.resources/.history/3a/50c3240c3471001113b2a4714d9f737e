@@ -1,0 +1,73 @@
+/*******************************************
+ * init_module.h
+ *
+ *  Created on: 19.06.2026 14:04:04
+ *      Author: Anatoly Alekseev <RenAshbell>
+ ******************************************/
+
+#ifndef NEORV32_INIT_MODULE_H_
+#define NEORV32_INIT_MODULE_H_
+
+/*******************************************
+ * Includes
+ ******************************************/
+#include "neorv32.h"
+#include "std_protocol.h"
+#include "std_protocol_app.h"
+/*******************************************
+ * Defines
+ ******************************************/
+#define ERROR_STATE				-1
+#define SUCCESS_STATE			 1
+#define BAUD_RATE   		  9600
+
+//Uncomment this if you have this periphery
+#define
+
+#define I2C_ON	0
+#if I2C_1
+#define I2C0	1
+#define I2C1	0
+#define I2C_SCK	100000U			/*SLC IIC*/
+#endif
+
+
+
+
+//#define SDI_INTERRUPT	1
+
+typedef struct {
+	bool uart_0;
+	bool uart_1;
+	bool custom_func;
+	bool general_timer;
+	bool clint_module;
+	bool dma_block;
+	bool neoled_block;
+	bool onewire_block;
+	bool pwm;
+	bool sdi;
+	bool slink;
+	bool spi;
+	bool gpio_block;
+} init_status_t;
+
+
+/*******************************************
+ * Global variables
+ ******************************************/
+extern init_status_t status_struct;
+
+
+
+
+
+/*******************************************
+ * Public function prototypes
+ ******************************************/
+void check_modules(void);
+bool init_module(void);
+
+
+
+#endif /* LIB_INIT_CORE_INIT_MODULE_H_ */

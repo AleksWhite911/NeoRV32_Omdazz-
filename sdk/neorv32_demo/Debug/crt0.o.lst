@@ -1,0 +1,409 @@
+   1              	# 0 "../crt0.S"
+   2              	# 1 "C:\\QuartusPrj\\Omdazz\\sdk\\neorv32_demo\\Debug//"
+   0              	
+   0              	
+   0              	
+   1              	// ================================================================================ //
+   2              	// NEORV32 CPU - crt0.S Start-Up Code                                               //
+   3              	// -------------------------------------------------------------------------------- //
+   4              	// The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32              //
+   5              	// Copyright (c) NEORV32 contributors.                                              //
+   6              	// Copyright (c) 2020 - 2026 Stephan Nolting. All rights reserved.                  //
+   7              	// Licensed under the BSD-3-Clause license, see LICENSE for details.                //
+   8              	// SPDX-License-Identifier: BSD-3-Clause                                            //
+   9              	// ================================================================================ //
+  10              	
+  11              	.file "crt0.S"
+   0              	
+  12              	.section .text.crt0
+  13              	.balign 4
+  14              	.global _start
+  15              	_start:
+  16              	.global __crt0_entry
+  17              	__crt0_entry:
+  18              	.cfi_startproc
+  19              	.cfi_undefined ra
+  20              	
+  21              	// ************************************************************************************************
+  22              	// Register setup.
+  23              	// ************************************************************************************************
+  24              	.option push
+  25              	.option norelax
+  26              	.option norvc                           // make sure setup code is uncompressed (if executing RVC o
+  27              	  csrr  x1, mhartid                     // get ID of this core
+  28              	
+  29              	  la    x4, __crt0_stack_top            // first address after last RAM byte, stack pointer (sp) st
+  30              	  andi  x2, x4, -16                     // align stack to 16-bytes according to the RISC-V ABI (#10
+  31              	  la    x3, __global_pointer$           // global pointer "gp"
+  32              	
+  33              	  li    x5, 0x00001800                  // mstatus.mpp = machine-mode
+  34              	  csrw  mstatus, x5
+  35              	  la    x6, __crt0_panic                // configure early-boot trap handler
+  36              	  csrw  mtvec, x6
+  37              	  csrw  mie, zero                       // disable all interrupt sources
+  38              	
+  39              	  la    x7,  __crt0_copy_data_src_begin // .data start of copy-source (in .rodata)
+  40              	  la    x8,  __crt0_copy_data_dst_begin // .data start of actual data region
+  41              	  la    x9,  __crt0_copy_data_dst_end   // .data end of actual data region
+  42              	  la    x10, __crt0_bss_start           // .bss start address
+  43              	  la    x11, __crt0_bss_end             // .bss end address (not part of bss)
+  44              	.option pop
+  45              	
+  46              	  // initialize remaining registers
+  47              	  addi  x12, zero, 0
+  48              	  addi  x13, zero, 0
+  49              	  addi  x14, zero, 0
+  50              	  addi  x15, zero, 0
+  51              	#ifndef __riscv_32e
+  52              	  addi  x16, zero, 0
+  53              	  addi  x17, zero, 0
+  54              	  addi  x18, zero, 0
+  55              	  addi  x19, zero, 0
+  56              	  addi  x20, zero, 0
+  57              	  addi  x21, zero, 0
+  58              	  addi  x22, zero, 0
+  59              	  addi  x23, zero, 0
+  60              	  addi  x24, zero, 0
+  61              	  addi  x25, zero, 0
+  62              	  addi  x26, zero, 0
+  63              	  addi  x27, zero, 0
+  64              	  addi  x28, zero, 0
+  65              	  addi  x29, zero, 0
+  66              	  addi  x30, zero, 0
+  67              	  addi  x31, zero, 0
+  68              	#endif
+  69              	
+  70              	// ************************************************************************************************
+  71              	// SMP setup - wait for configuration if we are not core 0 (max two cores are supported).
+  72              	// ************************************************************************************************
+  73              	__crt0_smp_check:
+  74              	  beqz  x1, __crt0_smp_primary // proceed with normal boot-up if we are core 0
+  75              	
+  76              	  // setup machine software interrupt
+  77              	__crt0_smp_setup:
+  78              	  la    x15,     __crt0_smp_wakeup
+  79              	  csrw  mtvec,   x15           // install interrupt handler
+  80              	  csrwi mie,     1 << 3        // only enable software interrupt source
+  81              	  csrsi mstatus, 1 << 3        // enable machine-level interrupts
+  82              	
+  83              	  // wait for interrupt in sleep mode
+  84              	__crt0_smp_sleep:
+  85              	  wfi
+  86              	  j __crt0_smp_sleep
+  87              	
+  88              	  // machine software interrupt handler
+  89              	.balign 4
+  90              	__crt0_smp_wakeup:
+  91              	  la    x15,   __crt0_panic    // panic if we encounter another trap
+  92              	  csrw  mtvec, x15
+  93              	  csrwi mie,   0               // disable all interrupt sources
+  94              	
+  95              	  li    x14, 0xfff44000        // CLINT.MTIMECMP base address
+  96              	  lw    x2,  8(x14)            // MTIMECMP[1].lo = stack top (sp)
+  97              	  lw    x12, 12(x14)           // MTIMECMP[1].hi = entry point
+  98              	
+  99              	  li    x14,  0xfff40000       // CLINT.MSWI base address
+ 100              	  sw    zero, 4(x14)           // clear MSWI[1]
+ 101              	
+ 102              	  j     __crt0_main_entry      // start at entry point
+ 103              	
+ 104              	__crt0_smp_primary:
+ 105              	
+ 106              	// ************************************************************************************************
+ 107              	// Copy .data section from ROM to RAM.
+ 108              	// ************************************************************************************************
+ 109              	__crt0_data_copy:
+ 110              	  beq   x7, x8, __crt0_data_copy_end  // skip if src == dst
+ 111              	  bge   x8, x9, __crt0_data_copy_end  // skip if empty section
+ 112              	
+ 113              	__crt0_data_copy_loop:
+ 114              	  lw    x15, 0(x7)
+ 115              	  sw    x15, 0(x8)                    // word-wise operations; section begins and ends on word boun
+ 116              	  addi  x7, x7, 4
+ 117              	  addi  x8, x8, 4
+ 118              	  blt   x8, x9, __crt0_data_copy_loop
+ 119              	__crt0_data_copy_end:
+ 120              	
+ 121              	// ************************************************************************************************
+ 122              	// Clear .bss section.
+ 123              	// ************************************************************************************************
+ 124              	__crt0_bss_clear:
+ 125              	  bge   x10, x11, __crt0_bss_clear_end
+ 126              	
+ 127              	__crt0_bss_clear_loop:
+ 128              	  sw    zero, 0(x10)
+ 129              	  addi  x10, x10, 4 // word-wise operations; section begins and ends on word boundary
+ 130              	  blt   x10, x11, __crt0_bss_clear_loop
+ 131              	__crt0_bss_clear_end:
+ 132              	
+ 133              	// ************************************************************************************************
+ 134              	// Call constructors (not supported for bootloader).
+ 135              	// [NOTE] Constructor/destructor calls may clobber caller-saved registers
+ 136              	// (t0-t6, a0-a7, ra). Loop counters use s0/s1 (callee-saved), which are
+ 137              	// preserved by the called functions according to the RISC-V calling convention.
+ 138              	// ************************************************************************************************
+ 139              	#ifndef MAKE_BOOTLOADER
+ 140              	__crt0_constructors_primary:
+ 141 0120 17040000 	  la    x8, __init_array_start
+ 141      13040400 
+ 142 0128 97040000 	  la    x9, __init_array_end
+ 142      93840400 
+ 143              	
+ 144              	__crt0_constructors:
+ 145 0130 635A9400 	  bge   x8, x9, __crt0_constructors_end  // skip if empty
+ 146              	
+ 147              	__crt0_constructors_loop:
+ 148 0134 83200400 	  lw    x1, 0(x8)
+ 149 0138 E7800000 	  jalr  x1, 0(x1) // call constructor function; put return address in ra
+ 150 013c 13044400 	  addi  x8, x8, 4
+ 151 0140 E34A94FE 	  blt   x8, x9, __crt0_constructors_loop
+ 152              	__crt0_constructors_end:
+ 153              	#endif
+ 154              	
+ 155              	// ************************************************************************************************
+ 156              	// Setup arguments and call main function.
+ 157              	// ************************************************************************************************
+ 158              	__crt0_main_primary:
+ 159 0144 17060000 	  la    x12, main         // primary core's (core0) entry point (#1169)
+ 159      13060600 
+ 160              	__crt0_main_entry:
+ 161 014c 0F00F00F 	  fence                   // synchronize loads/stores
+ 162 0150 0F100000 	  fence.i                 // synchronize instruction fetch
+ 163 0154 13050000 	  li    x10, 0            // x10 = a0 = argc = 0
+ 164 0158 93050000 	  li    x11, 0            // x11 = a1 = argv = 0
+ 165 015c E7000600 	  jalr  x1, x12           // call actual main function
+ 166              	
+ 167              	.global __crt0_main_exit
+ 168              	__crt0_main_exit:         // main's "return" and "exit" will arrive here
+ 169 0160 73700430 	  csrci mstatus, 1 << 3   // disable machine-level interrupts
+ 170 0164 73104030 	  csrw  mie, zero         // disable all interrupt sources
+ 171 0168 97050000 	  la    x11, __crt0_panic // re-install default crt0 trap handler
+ 171      93850500 
+ 172 0170 73905530 	  csrw  mtvec, x11
+ 173 0174 73100534 	  csrw  mscratch, x10     // backup main's return code to mscratch (for debugger or destructors)
+ 174              	
+ 175              	// ************************************************************************************************
+ 176              	// Call destructors (not supported for bootloader).
+ 177              	// [NOTE] Constructor/destructor calls may clobber caller-saved registers
+ 178              	// (t0-t6, a0-a7, ra). Loop counters use s0/s1 (callee-saved), which are
+ 179              	// preserved by the called functions according to the RISC-V calling convention.
+ 180              	// ************************************************************************************************
+ 181              	#ifndef MAKE_BOOTLOADER
+ 182              	__crt0_destructors_primary:
+ 183 0178 732440F1 	  csrr  x8, mhartid
+ 184 017c 63140402 	  bnez  x8, __crt0_destructors_end // execute destructors only on core 0
+ 185              	
+ 186 0180 17040000 	  la    x8, __fini_array_start
+ 186      13040400 
+ 187 0188 97040000 	  la    x9, __fini_array_end
+ 187      93840400 
+ 188              	
+ 189              	__crt0_destructors:
+ 190 0190 635A9400 	  bge   x8, x9, __crt0_destructors_end
+ 191              	
+ 192              	__crt0_destructors_loop:
+ 193 0194 83200400 	  lw    x1, 0(x8)
+ 194 0198 E7800000 	  jalr  x1, 0(x1)                  // call destructor function; put return address in ra
+ 195 019c 13044400 	  addi  x8, x8, 4
+ 196 01a0 E34A94FE 	  blt   x8, x9, __crt0_destructors_loop
+ 197              	__crt0_destructors_end:
+ 198              	#endif
+ 199              	
+ 200              	// ************************************************************************************************
+ 201              	// Halt CPU. Bootloader should never return; if it does -> panic.
+ 202              	// ************************************************************************************************
+ 203              	#ifndef MAKE_BOOTLOADER
+ 204              	__crt0_halting:
+ 205 01a4 732440F1 	  csrr x8, mhartid
+ 206 01a8 63140400 	  bnez x8, __crt0_halt
+ 207              	
+ 208              	.global __crt0_halt_primary
+ 209              	__crt0_halt_primary:
+ 210 01ac 13000000 	  nop  //ebreak     // execution done; try to transfer control to external debugger; otherwise -> p
+ 211              	
+ 212              	.global __crt0_halt
+ 213              	__crt0_halt: // same code as trap handler but with different label/address to track origin
+ 214 01b0 13000000 	  nop
+ 215 01b4 6FF0DFFF 	  j __crt0_halt
+ 216              	#endif
+ 217              	
+ 218              	// ************************************************************************************************
+ 219              	// CRT0 trap handler. Panic: halt and catch fire.
+ 220              	// ************************************************************************************************
+ 221              	.balign 4     // trap handler has to be 32-bit aligned
+ 222              	.option norvc // no compressed instruction to make this valid code on any platform configuration
+ 223              	.global __crt0_panic
+ 224              	__crt0_panic:
+ 225 01b8 73005010 	  wfi
+ 226 01bc 6FF0DFFF 	  j __crt0_panic
+ 227              	
+ 228              	.cfi_endproc
+ 229              	.end
+DEFINED SYMBOLS
+                            *ABS*:00000000 crt0.S
+              crt0.S:15     .text.crt0:00000000 _start
+              crt0.S:17     .text.crt0:00000000 __crt0_entry
+              crt0.S:18     .text.crt0:00000000 .L0 
+              crt0.S:19     .text.crt0:00000000 .L0 
+              crt0.S:27     .text.crt0:00000000 $xrv32i2p1_zicsr2p0_zifencei2p0
+              crt0.S:27     .text.crt0:00000000 .L0 
+              crt0.S:29     .text.crt0:00000004 .L0 
+              crt0.S:30     .text.crt0:0000000c .L0 
+              crt0.S:31     .text.crt0:00000010 .L0 
+              crt0.S:33     .text.crt0:00000018 .L0 
+              crt0.S:34     .text.crt0:00000020 .L0 
+           ../crt0.S:224    .text.crt0:000001b8 __crt0_panic
+              crt0.S:35     .text.crt0:00000024 .L0 
+              crt0.S:36     .text.crt0:0000002c .L0 
+              crt0.S:37     .text.crt0:00000030 .L0 
+              crt0.S:39     .text.crt0:00000034 .L0 
+              crt0.S:40     .text.crt0:0000003c .L0 
+              crt0.S:41     .text.crt0:00000044 .L0 
+              crt0.S:42     .text.crt0:0000004c .L0 
+              crt0.S:43     .text.crt0:00000054 .L0 
+              crt0.S:47     .text.crt0:0000005c .L0 
+              crt0.S:48     .text.crt0:00000060 .L0 
+              crt0.S:49     .text.crt0:00000064 .L0 
+              crt0.S:50     .text.crt0:00000068 .L0 
+              crt0.S:52     .text.crt0:0000006c .L0 
+              crt0.S:53     .text.crt0:00000070 .L0 
+              crt0.S:54     .text.crt0:00000074 .L0 
+              crt0.S:55     .text.crt0:00000078 .L0 
+              crt0.S:56     .text.crt0:0000007c .L0 
+              crt0.S:57     .text.crt0:00000080 .L0 
+              crt0.S:58     .text.crt0:00000084 .L0 
+              crt0.S:59     .text.crt0:00000088 .L0 
+              crt0.S:60     .text.crt0:0000008c .L0 
+              crt0.S:61     .text.crt0:00000090 .L0 
+              crt0.S:62     .text.crt0:00000094 .L0 
+              crt0.S:63     .text.crt0:00000098 .L0 
+              crt0.S:64     .text.crt0:0000009c .L0 
+              crt0.S:65     .text.crt0:000000a0 .L0 
+              crt0.S:66     .text.crt0:000000a4 .L0 
+              crt0.S:67     .text.crt0:000000a8 .L0 
+              crt0.S:73     .text.crt0:000000ac __crt0_smp_check
+              crt0.S:104    .text.crt0:000000f4 __crt0_smp_primary
+              crt0.S:74     .text.crt0:000000ac .L0 
+              crt0.S:77     .text.crt0:000000b0 __crt0_smp_setup
+              crt0.S:90     .text.crt0:000000cc __crt0_smp_wakeup
+              crt0.S:78     .text.crt0:000000b0 .L0 
+              crt0.S:79     .text.crt0:000000b8 .L0 
+              crt0.S:80     .text.crt0:000000bc .L0 
+              crt0.S:81     .text.crt0:000000c0 .L0 
+              crt0.S:84     .text.crt0:000000c4 __crt0_smp_sleep
+              crt0.S:85     .text.crt0:000000c4 .L0 
+              crt0.S:86     .text.crt0:000000c8 .L0 
+              crt0.S:91     .text.crt0:000000cc .L0 
+              crt0.S:92     .text.crt0:000000d4 .L0 
+              crt0.S:93     .text.crt0:000000d8 .L0 
+              crt0.S:95     .text.crt0:000000dc .L0 
+              crt0.S:96     .text.crt0:000000e0 .L0 
+              crt0.S:97     .text.crt0:000000e4 .L0 
+              crt0.S:99     .text.crt0:000000e8 .L0 
+              crt0.S:100    .text.crt0:000000ec .L0 
+           ../crt0.S:160    .text.crt0:0000014c __crt0_main_entry
+              crt0.S:102    .text.crt0:000000f0 .L0 
+              crt0.S:109    .text.crt0:000000f4 __crt0_data_copy
+              crt0.S:119    .text.crt0:00000110 __crt0_data_copy_end
+              crt0.S:110    .text.crt0:000000f4 .L0 
+              crt0.S:111    .text.crt0:000000f8 .L0 
+              crt0.S:113    .text.crt0:000000fc __crt0_data_copy_loop
+              crt0.S:114    .text.crt0:000000fc .L0 
+              crt0.S:115    .text.crt0:00000100 .L0 
+              crt0.S:116    .text.crt0:00000104 .L0 
+              crt0.S:117    .text.crt0:00000108 .L0 
+              crt0.S:118    .text.crt0:0000010c .L0 
+              crt0.S:124    .text.crt0:00000110 __crt0_bss_clear
+              crt0.S:131    .text.crt0:00000120 __crt0_bss_clear_end
+              crt0.S:125    .text.crt0:00000110 .L0 
+              crt0.S:127    .text.crt0:00000114 __crt0_bss_clear_loop
+              crt0.S:128    .text.crt0:00000114 .L0 
+              crt0.S:129    .text.crt0:00000118 .L0 
+              crt0.S:130    .text.crt0:0000011c .L0 
+           ../crt0.S:140    .text.crt0:00000120 __crt0_constructors_primary
+           ../crt0.S:141    .text.crt0:00000120 .L0 
+           ../crt0.S:142    .text.crt0:00000128 .L0 
+           ../crt0.S:144    .text.crt0:00000130 __crt0_constructors
+           ../crt0.S:152    .text.crt0:00000144 __crt0_constructors_end
+           ../crt0.S:145    .text.crt0:00000130 .L0 
+           ../crt0.S:147    .text.crt0:00000134 __crt0_constructors_loop
+           ../crt0.S:148    .text.crt0:00000134 .L0 
+           ../crt0.S:149    .text.crt0:00000138 .L0 
+           ../crt0.S:150    .text.crt0:0000013c .L0 
+           ../crt0.S:151    .text.crt0:00000140 .L0 
+           ../crt0.S:158    .text.crt0:00000144 __crt0_main_primary
+           ../crt0.S:159    .text.crt0:00000144 .L0 
+           ../crt0.S:161    .text.crt0:0000014c .L0 
+           ../crt0.S:162    .text.crt0:00000150 .L0 
+           ../crt0.S:163    .text.crt0:00000154 .L0 
+           ../crt0.S:164    .text.crt0:00000158 .L0 
+           ../crt0.S:165    .text.crt0:0000015c .L0 
+           ../crt0.S:168    .text.crt0:00000160 __crt0_main_exit
+           ../crt0.S:169    .text.crt0:00000160 .L0 
+           ../crt0.S:170    .text.crt0:00000164 .L0 
+           ../crt0.S:171    .text.crt0:00000168 .L0 
+           ../crt0.S:172    .text.crt0:00000170 .L0 
+           ../crt0.S:173    .text.crt0:00000174 .L0 
+           ../crt0.S:182    .text.crt0:00000178 __crt0_destructors_primary
+           ../crt0.S:183    .text.crt0:00000178 .L0 
+           ../crt0.S:197    .text.crt0:000001a4 __crt0_destructors_end
+           ../crt0.S:184    .text.crt0:0000017c .L0 
+           ../crt0.S:186    .text.crt0:00000180 .L0 
+           ../crt0.S:187    .text.crt0:00000188 .L0 
+           ../crt0.S:189    .text.crt0:00000190 __crt0_destructors
+           ../crt0.S:190    .text.crt0:00000190 .L0 
+           ../crt0.S:192    .text.crt0:00000194 __crt0_destructors_loop
+           ../crt0.S:193    .text.crt0:00000194 .L0 
+           ../crt0.S:194    .text.crt0:00000198 .L0 
+           ../crt0.S:195    .text.crt0:0000019c .L0 
+           ../crt0.S:196    .text.crt0:000001a0 .L0 
+           ../crt0.S:204    .text.crt0:000001a4 __crt0_halting
+           ../crt0.S:205    .text.crt0:000001a4 .L0 
+           ../crt0.S:213    .text.crt0:000001b0 __crt0_halt
+           ../crt0.S:206    .text.crt0:000001a8 .L0 
+           ../crt0.S:209    .text.crt0:000001ac __crt0_halt_primary
+           ../crt0.S:210    .text.crt0:000001ac .L0 
+           ../crt0.S:214    .text.crt0:000001b0 .L0 
+           ../crt0.S:215    .text.crt0:000001b4 .L0 
+           ../crt0.S:225    .text.crt0:000001b8 .L0 
+           ../crt0.S:226    .text.crt0:000001bc .L0 
+           ../crt0.S:228    .text.crt0:000001c0 .L0 
+                  .debug_line_str:00000000 .L0 
+                  .debug_line_str:0000002c .L0 
+                  .debug_line_str:00000033 .L0 
+           ../crt0.S:229    .text.crt0:000001c0 .L0 
+                       .text.crt0:00000000 .L0 
+           ../crt0.S:229    .text.crt0:000001c0 .L0 
+                       .debug_str:00000000 .L0 
+                       .debug_str:00000007 .L0 
+                       .debug_str:00000033 .L0 
+              crt0.S:29     .text.crt0:00000004 .L0 
+              crt0.S:31     .text.crt0:00000010 .L0 
+              crt0.S:35     .text.crt0:00000024 .L0 
+              crt0.S:39     .text.crt0:00000034 .L0 
+              crt0.S:40     .text.crt0:0000003c .L0 
+              crt0.S:41     .text.crt0:00000044 .L0 
+              crt0.S:42     .text.crt0:0000004c .L0 
+              crt0.S:43     .text.crt0:00000054 .L0 
+              crt0.S:78     .text.crt0:000000b0 .L0 
+              crt0.S:91     .text.crt0:000000cc .L0 
+           ../crt0.S:141    .text.crt0:00000120 .L0 
+           ../crt0.S:142    .text.crt0:00000128 .L0 
+           ../crt0.S:159    .text.crt0:00000144 .L0 
+           ../crt0.S:171    .text.crt0:00000168 .L0 
+           ../crt0.S:186    .text.crt0:00000180 .L0 
+           ../crt0.S:187    .text.crt0:00000188 .L0 
+
+UNDEFINED SYMBOLS
+__crt0_stack_top
+__global_pointer$
+__crt0_copy_data_src_begin
+__crt0_copy_data_dst_begin
+__crt0_copy_data_dst_end
+__crt0_bss_start
+__crt0_bss_end
+__init_array_start
+__init_array_end
+main
+__fini_array_start
+__fini_array_end

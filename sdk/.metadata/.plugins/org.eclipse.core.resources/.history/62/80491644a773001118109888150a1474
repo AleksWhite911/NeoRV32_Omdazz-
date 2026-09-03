@@ -1,0 +1,491 @@
+/*******************************************
+ * ext_communication.c
+ *
+ *  Created on: 16.06.2022 12:13:06
+ *      Author: Anton Moiseev <atom>
+ ******************************************/
+#include "std_protocol_actions.h"
+
+/*******************************************
+ * Global variables
+ ******************************************/
+uint32_t dev_id 	 = 0xCAFE;
+
+
+enum{
+	BASIC		= 0x00,
+	EXTENDED	= 0xff
+};
+struct operation_mode{
+	uint8_t mode;
+}RF_OUT = {BASIC};
+
+
+/*****************************************************************************
+ * Function: std_action_setfreq
+ *
+ * @brief This function controls the analog outputs of the synchronizer and synthesizer.
+ *
+ * @param sig_id - Analog output indicator
+ * 		  freq   - The required frequency at the selected output
+ *
+ * @return none
+ ******************************************/
+void std_action_setfreq(uint16_t sig_id, uint64_t freq) {
+	int Status;
+}
+
+/*******************************************
+ * Set power
+ ******************************************/
+void std_action_setpow(uint16_t sig_id, uint16_t pow) {
+		int Status;
+}
+
+
+/*******************************************
+ * Setting the modulation type
+ ******************************************/
+void std_action_modview(uint16_t sig_id, uint16_t view) {
+	int Status;
+}
+
+/*******************************************
+ * Set modulation form
+ ******************************************/
+void std_action_modform(uint16_t sig_id, uint16_t form) {
+	int Status;
+}
+/*******************************************
+ * Set frequency deviation
+ ******************************************/
+void std_action_setdevfr(uint16_t sig_id, uint32_t freq) {
+	int Status;
+}
+
+/*******************************************
+ * Set phase deviation
+ ******************************************/
+void std_action_setdevph(uint16_t sig_id, uint16_t phase) {
+	int Status;
+}
+
+/*******************************************
+ * Set signal source
+ ******************************************/
+void std_action_sigsource(uint16_t sig_id, uint16_t source) {
+	int Status;
+}
+
+
+/*******************************************
+ * Get ADC value
+ ******************************************/
+void std_action_getadcval(uint16_t adc_num, uint32_t *value) {
+	int Status;
+}
+
+/*******************************************
+ * Set signal width for square AM
+ ******************************************/
+void std_action_sigwidthsq(uint16_t sig_id, uint32_t width) {
+	int Status;
+
+}
+
+
+/**/
+void std_action_getdigpot(uint16_t * getval){
+	int Status;
+}
+/**/
+void std_action_setdigpot(uint16_t  setval){
+	int Status;
+}
+/**/
+void std_action_getemepot(uint16_t * getval){
+	int Status;
+}
+/**/
+void std_action_setemepot(uint16_t  setval){
+	int Status;
+}
+
+
+/*******************************************
+ * Set phase
+ ******************************************/
+void std_action_setphase(uint16_t sig_id, uint32_t phase) {
+	int Status;
+}
+
+/*******************************************
+ * Get ID
+ ******************************************/
+void std_action_getid(uint32_t *id) {
+	*id = dev_id;
+}
+
+/*******************************************
+ * Set ID
+ ******************************************/
+void std_action_setid(uint32_t *id) {
+    dev_id = *id;
+}
+
+/*******************************************
+ * Get unique ID
+ ******************************************/
+void std_action_uid(uint64_t *uid) {
+	*uid = UID;
+}
+
+
+/*******************************************
+ * Get version
+ ******************************************/
+void std_action_devver(uint64_t *version) {
+	int Status;
+}
+
+
+/*******************************************
+ * Get status
+ ******************************************/
+void std_action_stat(uint32_t *status) {
+	int Status;
+}
+/*******************************************
+ * Power control
+ ******************************************/
+void std_action_pwrsel(uint32_t mask, uint32_t state) {
+	int Status;
+}
+
+
+/*******************************************
+ * Signal enable
+ * Signals CLK10MHz and CLK100MHz have been renamed to CLK_Internal and CLK_External respectively.
+ ******************************************/
+void std_action_sigen(uint16_t sig_num, uint16_t state) {
+	int Status;
+}
+
+/*******************************************
+ * Set depth of suppressions
+ ******************************************/
+void std_action_setdepth(uint16_t sig_id, uint16_t depth) {
+	int Status;
+}
+
+/*******************************************
+ * Set signal delay
+ ******************************************/
+void std_action_sigdelay(uint16_t sig_id, uint32_t delay) {
+	int Status;
+}
+
+/*******************************************
+ * Set signal width for pulse modulation
+ ******************************************/
+void std_action_sigwidthpls(uint16_t sig_id, uint32_t width) {
+	int Status;
+}
+
+/*******************************************
+ * Set signal width for triangle AM
+ ******************************************/
+void std_action_sigwidthtr(uint16_t sig_id, uint32_t width) {
+	int Status;
+}
+
+/*******************************************
+ * Set signal polarity
+ ******************************************/
+void std_action_sigplrt(uint16_t sig_id, uint16_t polarity) {
+	int Status;
+}
+
+/*******************************************
+ * Get voltage
+ ******************************************/
+void std_action_getvoltage(uint16_t sens_id, uint32_t *voltage) {
+	int Status;
+}
+
+/*******************************************
+ * Get current
+ ******************************************/
+void std_action_getcurrent(uint16_t sens_id, uint32_t *current) {
+	int Status;
+}
+
+/*******************************************
+ * Set LED color (RGB)
+ ******************************************/
+void std_action_setrgb(uint16_t led_num, uint16_t red, uint16_t green, uint16_t blue) {
+	int Status;
+}
+
+/*******************************************
+ * Get LED color (RGB)
+ ******************************************/
+void std_action_getrgb(uint16_t led_num, uint16_t *red, uint16_t *green, uint16_t *blue) {
+	int Status;
+}
+
+/*******************************************
+ * Set LED blink params
+ ******************************************/
+void std_action_setledbl(uint16_t led_num, uint16_t period, uint16_t time) {
+	int Status;
+}
+
+/*******************************************
+ * Get LED blink params
+ ******************************************/
+void std_action_getledbl(uint16_t led_num, uint16_t *period, uint16_t *time) {
+	int Status;
+}
+/*******************************************
+ * Unlock debug interface
+ ******************************************/
+void std_action_unlock(void) {
+	int Status;
+}
+
+/*******************************************
+ * Lock debug interface
+ ******************************************/
+void std_action_lock(void) {
+	int Status;
+}
+
+/*******************************************
+ * Set voltage
+ ******************************************/
+void std_action_setvoltage(uint16_t sig_id, uint32_t voltage) {
+	int Status;
+}
+
+/*******************************************
+ * Set FAN speed
+ ******************************************/
+void std_action_setfan(uint16_t fan_id, uint16_t speed) {
+	int Status;
+}
+
+/*******************************************
+ * Get FAN speed
+ ******************************************/
+void std_action_getfan(uint16_t fan_id, uint16_t *speed) {
+	int Status;
+}
+
+/*******************************************
+ * Get FAN RPM
+ ******************************************/
+void std_action_getrpm(uint16_t fan_id, uint16_t *rpm) {
+	int Status;
+}
+
+/*******************************************
+ * Set RF channel by frequency (
+ * Frequency step is high resolution (0.001 Hz)
+ ******************************************/
+void std_action_setrfchfhres(uint64_t freq) {
+	int Status;
+}
+
+/*******************************************
+ * Get frequencies in current RF channel
+ * Frequency step is high resolution (0.001 Hz)
+ ******************************************/
+void std_action_getrfchfhres(uint64_t *freq_start, uint64_t *freq_stop) {
+	int Status;
+}
+
+/*******************************************
+ * Get sensor count
+ ******************************************/
+void std_action_senscnt(uint16_t sens_type, uint16_t *sens_cnt) {
+	int Status;
+}
+/*******************************************
+ * Read data at relative address
+ ******************************************/
+void std_action_rdrel(uint32_t addr, uint16_t count, uint16_t *data) {
+	int Status;
+}
+
+/*******************************************
+ * Write data at relative address
+ ******************************************/
+void std_action_wrrel(uint32_t addr, uint16_t count, uint16_t *data) {
+	int Status;
+}
+
+/*******************************************
+ * Read data at absolute address
+ ******************************************/
+void std_action_rdabs(uint32_t addr, uint32_t *data) {
+	int Status;
+}
+
+/*******************************************
+ * Write data at absolute address
+ ******************************************/
+void std_action_wrabs(uint32_t addr, uint32_t data) {
+	int Status;
+}
+
+/*******************************************
+ * Full transit
+ ******************************************/
+void std_action_ftrans(uint16_t *tx_data, uint16_t *rx_data) {
+	int Status;
+}
+
+/*******************************************
+ * Simple transit
+ ******************************************/
+void std_action_strans(uint16_t tx_count, uint16_t rx_count, uint16_t *tx_data, uint16_t *rx_data) {
+	int Status;
+}
+
+/*******************************************
+ * Get oscillator state
+ ******************************************/
+void std_action_getosc(uint32_t *state) {
+	int Status;
+}
+
+/*******************************************
+ * Set oscillator state
+ ******************************************/
+void std_action_setosc(uint32_t mask, uint32_t state) {
+	int Status;
+}
+
+/*******************************************
+ * Get temperature
+ ******************************************/
+void std_action_temp(uint16_t sens_num, uint32_t *temp) {
+	int Status;
+}
+/*******************************************
+ * Get attenuator value
+ ******************************************/
+void std_action_getatt(uint16_t att_num, uint16_t *value) {
+}
+
+/*******************************************
+ * Set attenuator value
+ ******************************************/
+void std_action_setatt(uint16_t att_num, uint16_t value) {
+}
+
+/*******************************************
+ * Get data channel
+ ******************************************/
+void std_action_getchdat(uint16_t *channel) {
+}
+
+/*******************************************
+ * Set data channel
+ ******************************************/
+void std_action_setchdat(uint16_t channel) {
+}
+
+/*******************************************
+ * Set update delay
+ ******************************************/
+void std_action_upddelay(uint32_t delay) {
+}
+
+/*******************************************
+ * Actuator control
+ ******************************************/
+void std_action_actctrl(uint16_t act_num, uint16_t state) {
+}
+
+/*******************************************
+ * Enable/disable outputs
+ ******************************************/
+void std_action_outen(uint32_t mask, uint32_t state) {
+}
+
+/*******************************************
+*Turn on modulation
+*------------------- ***New command in the standard protocol
+*******************************************/
+void std_action_mod_start(uint16_t sig_id, uint16_t turn, uint32_t deviation, uint32_t freq_mod) {
+	int Status;
+}
+/*******************************************
+ * Get DAC resolution
+ ******************************************/
+void std_action_getdacrsl(uint16_t dac_num, uint16_t *resolution) {
+}
+/*******************************************
+ * Get frequency
+ ******************************************/
+void std_action_getfreq(uint16_t sig_id, uint64_t *freq) {
+}
+
+/*******************************************
+ * Get power
+ ******************************************/
+void std_action_getpow(uint16_t sig_id, uint16_t *pow) {
+}
+
+/*******************************************
+ * Set DAC value
+ ******************************************/
+void std_action_setdacval(uint16_t dac_num, uint32_t value) {
+}
+
+/*******************************************
+ * DAC enable
+ ******************************************/
+void std_action_dacoes(uint16_t dac_num, uint16_t dac_out_state) {
+}
+
+/*******************************************
+ * Set DAC value step by step
+ ******************************************/
+void std_action_setdacramp(uint16_t dac_num, uint32_t value, uint16_t step) {
+}
+
+/*******************************************
+ * Set RF channel by number
+ ******************************************/
+void std_action_setrfchn(uint16_t channel) {
+}
+
+/*******************************************
+ * Set RF channel by frequency
+ ******************************************/
+void std_action_setrfchf(uint16_t freq) {
+}
+
+/*******************************************
+ * Control analog switch
+ ******************************************/
+void std_action_setsw(uint16_t sw_num, uint16_t channel) {
+}
+
+/*******************************************
+ * Get RF channel number
+ ******************************************/
+void std_action_getrfchn(uint16_t *channel) {
+}
+
+/*******************************************
+ * Get frequency in current RF channel
+ ******************************************/
+void std_action_getrfchf(uint16_t *freq_start, uint16_t *freq_stop) {
+}
+/*******************************************
+ * End of file ext_communication.c
+ ******************************************/

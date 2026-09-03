@@ -1,0 +1,93 @@
+// ================================================================================ //
+// The NEORV32 RISC-V Processor - https://github.com/stnolting/neorv32              //
+// Copyright (c) NEORV32 contributors.                                              //
+// Copyright (c) 2020 - 2026 Stephan Nolting. All rights reserved.                  //
+// Licensed under the BSD-3-Clause license, see LICENSE for details.                //
+// SPDX-License-Identifier: BSD-3-Clause                                            //
+// ================================================================================ //
+
+
+/**********************************************************************//**
+ * @file demo_cfu/main.c
+ * @brief Example program showing how to use the CFU's custom instructions
+ * (XTEA example). Take a look at the commented "hardware-counterpart" of
+ * this CFU example in 'rtl/core/neorv32_cpu_cp_cfu.vhd'.
+ **************************************************************************/
+#include <neorv32.h>
+
+
+/**********************************************************************//**
+ * @name User configuration
+ **************************************************************************/
+/**@{*/
+/** UART BAUD rate */
+#define BAUD_RATE   9600
+/** Number of XTEA rounds */
+#define XTEA_ROUNDS 20
+/** Input data size (number of 32-bit words), has to be even */
+#define DATA_NUM    64
+/**@}*/
+
+/**********************************************************************//**
+ * Main function: run pure-SW XTEA and compare with HW-accelerated XTEA
+ *
+ * @note This program requires UART0 and the Xcfu and Zicntr ISA extension.
+ *
+ * @return 0 if execution was successful
+ **************************************************************************/
+int main() {
+
+  uint32_t i, j;
+  uint32_t v[2];
+  // initialize NEORV32 run-time environment
+  neorv32_rte_setup();
+
+  // check if UART0 is implemented
+  if (neorv32_uart0_available() == 0) {
+    return -1; // UART0 not available, exit
+  }
+
+  // setup UART0 at default baud rate, no interrupts
+  neorv32_uart0_setup(BAUD_RATE, 0);
+
+  // check if the CFU is implemented (the CFU is wrapped in the core's "Xcfu" ISA extension)
+  if ((neorv32_cpu_csr_read(CSR_MXISA) & (1 << CSR_MXISA_XCFU)) == 0) {
+    neorv32_uart0_printf("ERROR! CFU ('Xcfu' ISA extension) not implemented!\n");
+    return -1;
+  }
+
+  // check if the CPU base counters are implemented
+  if ((neorv32_cpu_csr_read(CSR_MXISA) & (1 << CSR_MXISA_ZICNTR)) == 0) {
+    neorv32_uart0_printf("ERROR! Base counters ('Zicntr' ISA extension) not implemented!\n");
+    return -1;
+  }
+
+  // check if data size configuration is even
+  if ((DATA_NUM & 1) != 0) {
+    neorv32_uart0_printf("ERROR! DATA_NUM has to be even!\n");
+    return -1;
+  }
+
+  // intro
+  neorv32_uart0_printf("\n<<< NEORV32 Custom Functions Unit (CFU) - Custom Instructions Example >>>\n\n");
+
+  neorv32_uart0_printf("[NOTE] This program assumes the default CFU hardware in\n"
+                       "       rtl/core/neorv32_cpu_cp_cfu.vhd that implements\n"
+                       "       the Extended Tiny Encryption Algorithm (XTEA).\n\n");
+
+
+
+
+
+  neorv32_uart0_printf("\nCFU demo blink\n");
+  while(1) {
+  //Check gpio block
+	  if (neorv32_gpio_available > 0) {
+		  neorv32_gpio_pin_toggle(0);
+		  neorv32_aux_delay_ms(27000000, 1000);
+		  neorv32_gpio_pin_toggle(0);
+		  neorv32_aux_delay_ms(27000000, 1000);
+	  }
+  }
+
+}

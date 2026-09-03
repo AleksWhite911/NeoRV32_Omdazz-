@@ -1,0 +1,67 @@
+/*
+ * std_protocol_hal.c
+ *
+ *  Created on: 8 ���. 2024 �.
+ *      Author: Viacheslav
+ */
+/***************************** Include Files ********************************/
+
+#include "std_protocol_hal.h"
+/*******************************************
+ * The instance of the SPI device
+ ******************************************/
+/*---------------------------------------------------------------------------*/
+/*------------------------------- FUNCTIONS ---------------------------------*/
+/*--------------------------------------------*/
+/**/
+int STD_SPI_Init(void) {
+	uint32_t Status;
+	neorv32_sdi_setup(SDI_CTRL_IRQ_RX_NEMPTY);	//install interrupt rx not empty
+
+}
+
+/*******************************************
+ * Read data from control SPI
+ ******************************************/
+uint16_t STD_SPI_Read(void) {
+    uint8_t  data;
+    uint32_t controlReg;
+}
+
+/*******************************************
+ * Write data to control SPI
+ ******************************************/
+void STD_SPI_Write(uint16_t data) {
+	uint32_t controlReg;
+}
+
+/*******************************************
+ * Have receive data in control SPI?
+ ******************************************/
+bool STD_SPI_HaveData(void) {
+	if (!neorv32_sdi_rx_empty())
+		return true;
+	else
+		return false;
+}
+
+/*******************************************
+ * Can transmit data to control SPI?
+ ******************************************/
+bool STD_SPI_CanTransmit(void) {
+}
+
+/*---------------------------*/
+/*****************************/
+/*---------------------------*/
+
+void STD_Timer_Init(uint32_t val) {
+
+}
+
+void STD_Timer_Start(void) {
+}
+
+
+void STD_Timer_Stop(void) {
+}

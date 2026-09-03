@@ -1,0 +1,69 @@
+11:55:02 **** Build of configuration Debug for project picorv32_qemu_demo ****
+make all 
+Building file: ../src/lib/firmware.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/lib/firmware.o.lst" -MMD -MP -MF"src/lib/firmware.d" -MT"src/lib/firmware.o" -c -o "src/lib/firmware.o" "../src/lib/firmware.c"
+Finished building: ../src/lib/firmware.c
+ 
+Building file: ../src/lib/printf.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/lib/printf.o.lst" -MMD -MP -MF"src/lib/printf.d" -MT"src/lib/printf.o" -c -o "src/lib/printf.o" "../src/lib/printf.c"
+Finished building: ../src/lib/printf.c
+ 
+Building file: ../src/bsp/wbgpio.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/bsp/wbgpio.o.lst" -MMD -MP -MF"src/bsp/wbgpio.d" -MT"src/bsp/wbgpio.o" -c -o "src/bsp/wbgpio.o" "../src/bsp/wbgpio.c"
+Finished building: ../src/bsp/wbgpio.c
+ 
+Building file: ../src/bsp/wbuart.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/bsp/wbuart.o.lst" -MMD -MP -MF"src/bsp/wbuart.d" -MT"src/bsp/wbuart.o" -c -o "src/bsp/wbuart.o" "../src/bsp/wbuart.c"
+Finished building: ../src/bsp/wbuart.c
+ 
+Building file: ../src/custom_ops.S
+Invoking: GNU RISC-V Cross Assembler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -x assembler-with-cpp -Wa,-adhlns="src/custom_ops.o.lst" -MMD -MP -MF"src/custom_ops.d" -MT"src/custom_ops.o" -c -o "src/custom_ops.o" "../src/custom_ops.S"
+Finished building: ../src/custom_ops.S
+ 
+Building file: ../src/irq.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/irq.o.lst" -MMD -MP -MF"src/irq.d" -MT"src/irq.o" -c -o "src/irq.o" "../src/irq.c"
+Finished building: ../src/irq.c
+ 
+Building file: ../src/loader.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/loader.o.lst" -MMD -MP -MF"src/loader.d" -MT"src/loader.o" -c -o "src/loader.o" "../src/loader.c"
+Finished building: ../src/loader.c
+ 
+Building file: ../src/main.c
+Invoking: GNU RISC-V Cross C Compiler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\bsp" -I"D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\lib" -std=gnu11 -Wa,-adhlns="src/main.o.lst" -MMD -MP -MF"src/main.d" -MT"src/main.o" -c -o "src/main.o" "../src/main.c"
+Finished building: ../src/main.c
+ 
+Building file: ../src/start_qemu.S
+Invoking: GNU RISC-V Cross Assembler
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -x assembler-with-cpp -Wa,-adhlns="src/start_qemu.o.lst" -MMD -MP -MF"src/start_qemu.d" -MT"src/start_qemu.o" -c -o "src/start_qemu.o" "../src/start_qemu.S"
+Finished building: ../src/start_qemu.S
+ 
+Building target: picorv32_qemu_demo.elf
+Invoking: GNU RISC-V Cross C Linker
+riscv-none-elf-gcc -march=rv32imc_zicsr -mabi=ilp32 -mtune=size -mcmodel=medany -msmall-data-limit=8 -mstrict-align -msave-restore -O0 -fmessage-length=0 -ffunction-sections -fdata-sections -fno-builtin -g -T "D:\GwinPrj\Eclipse\picorv32_qemu_demo\src\sections_qemu.lds" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"picorv32_qemu_demo.map" -mcmodel=medany -o "picorv32_qemu_demo.elf" ./src/lib/firmware.o ./src/lib/printf.o  ./src/bsp/wbgpio.o ./src/bsp/wbuart.o  ./src/custom_ops.o ./src/irq.o ./src/loader.o ./src/main.o ./src/start_qemu.o   
+Finished building target: picorv32_qemu_demo.elf
+ 
+Invoking: GNU RISC-V Cross Create Flash Image
+riscv-none-elf-objcopy -O binary -j .text -j .data -j.irqsec -j.ldsec -j.btsec "picorv32_qemu_demo.elf"  "picorv32_qemu_demo.bin"
+Finished building: picorv32_qemu_demo.bin
+ 
+Invoking: GNU RISC-V Cross Create Listing
+riscv-none-elf-objdump --source --all-headers --demangle --line-numbers --wide "picorv32_qemu_demo.elf" > "picorv32_qemu_demo.lst"
+Finished building: picorv32_qemu_demo.lst
+ 
+Invoking: GNU RISC-V Cross Print Size
+riscv-none-elf-size --format=berkeley "picorv32_qemu_demo.elf"
+   text	   data	    bss	    dec	    hex	filename
+   3548	      0	   2048	   5596	   15dc	picorv32_qemu_demo.elf
+Finished building: picorv32_qemu_demo.siz
+ 
+
+11:55:03 Build Finished. 0 errors, 0 warnings. (took 935ms)
+
