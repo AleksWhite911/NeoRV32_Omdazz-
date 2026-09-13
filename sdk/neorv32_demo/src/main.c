@@ -40,26 +40,31 @@
 int main() {
 
   // initialize NEORV32 run-time environment
-  uint8_t data;
   neorv32_rte_setup();
   check_modules();
   init_module();
-  scan_twi();
+  //scan_twi();
+  ST7789_Init();
+  ST7789_Clear();
 
-  i2c_write_byte(0xA0, 0xA0, 0x0);
-  data = i2c_read_byte(0xA0, 0x0);
-  print_hex_byte(data);
-  neorv32_uart0_printf("\n");
-  uint32_t test = 0xFFAABBCC;
-  i2c_write_word(test, 0xA0, 0x0);
+
+//  print_hex_byte(data);
+//  neorv32_uart0_printf("\n");
+//  uint32_t test = 0xFFAABBCC;
+//  uint16_t test_word = 0x03FF;
+//  flash_write_word(FLASH_BANK_0, test_word, 0xA0);
 
 
   while(1) {
-	  neorv32_gpio_pin_toggle(0);
-	  neorv32_gpio_pin_toggle(1);
-	  neorv32_gpio_pin_toggle(2);
-	  neorv32_gpio_pin_toggle(3);
-	  neorv32_gpio_pin_toggle(4);
+	  ST7789_FillScreen( RGB565(255, 0, 0) );
+	  ST7789_FillScreen( RGB565(0, 255, 0) );
+	  ST7789_FillScreen( RGB565(0, 0, 255) );
+
+	  ST7789_DrawBitmap(60, 200, logo, 128, 27, RGB565(255, 255, 255));
+	  //neorv32_gpio_pin_toggle(0);
+	  //neorv32_gpio_pin_toggle(1);
+	  //neorv32_gpio_pin_toggle(2);
+	  //neorv32_gpio_pin_toggle(3);
 	  neorv32_aux_delay_ms(CPU_CLOCK, 500);
   }
 

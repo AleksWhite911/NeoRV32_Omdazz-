@@ -4,7 +4,9 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../lib/source/i2c_driver.c \
+../lib/source/bitmap.c \
+../lib/source/fonts.c \
+../lib/source/i2c_driver_flash.c \
 ../lib/source/init_module.c \
 ../lib/source/neorv32_aux.c \
 ../lib/source/neorv32_cfs.c \
@@ -29,10 +31,14 @@ C_SRCS += \
 ../lib/source/neorv32_twi.c \
 ../lib/source/neorv32_uart.c \
 ../lib/source/neorv32_wdt.c \
+../lib/source/st7789.c \
+../lib/source/st7789_hal.c \
 ../lib/source/utility.c 
 
 OBJS += \
-./lib/source/i2c_driver.o \
+./lib/source/bitmap.o \
+./lib/source/fonts.o \
+./lib/source/i2c_driver_flash.o \
 ./lib/source/init_module.o \
 ./lib/source/neorv32_aux.o \
 ./lib/source/neorv32_cfs.o \
@@ -57,10 +63,14 @@ OBJS += \
 ./lib/source/neorv32_twi.o \
 ./lib/source/neorv32_uart.o \
 ./lib/source/neorv32_wdt.o \
+./lib/source/st7789.o \
+./lib/source/st7789_hal.o \
 ./lib/source/utility.o 
 
 C_DEPS += \
-./lib/source/i2c_driver.d \
+./lib/source/bitmap.d \
+./lib/source/fonts.d \
+./lib/source/i2c_driver_flash.d \
 ./lib/source/init_module.d \
 ./lib/source/neorv32_aux.d \
 ./lib/source/neorv32_cfs.d \
@@ -85,6 +95,8 @@ C_DEPS += \
 ./lib/source/neorv32_twi.d \
 ./lib/source/neorv32_uart.d \
 ./lib/source/neorv32_wdt.d \
+./lib/source/st7789.d \
+./lib/source/st7789_hal.d \
 ./lib/source/utility.d 
 
 

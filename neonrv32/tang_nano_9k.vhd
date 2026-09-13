@@ -24,9 +24,7 @@ entity tang_nano_9k is
     -- adapt these for your setup --
     CLOCK_FREQUENCY   : natural := 50000000;  -- clock frequency of clk_i in Hz
     MEM_INT_IMEM_SIZE : natural := 16 * 1024;   -- size of processor-internal instruction memory in bytes
-    MEM_INT_DMEM_SIZE : natural :=  8 * 1024;   -- size of processor-internal data memory in bytes
-    UFLASH_BASE : std_logic_vector(31 downto 0) := x"00000000";
-    UFLASH_END : std_logic_vector(31 downto 0) :=  x"00010000" -- 38 pages * 2048 bytes
+    MEM_INT_DMEM_SIZE : natural :=  8 * 1024   -- size of processor-internal data memory in bytes
 
   );
   port (
@@ -34,7 +32,7 @@ entity tang_nano_9k is
     clk_i       : in  std_ulogic; -- global clock, rising edge
     rstn_i      : in  std_ulogic; -- global reset, low-active, async
     -- GPIO --
-    gpio_o     : out std_ulogic_vector(4 downto 0); -- parallel output
+    gpio_o     : out std_ulogic_vector(7 downto 0); -- parallel output
     -- UART0 --
     uart0_txd_o : out std_ulogic; -- UART0 send data
     uart0_rxd_i : in  std_ulogic;  -- UART0 receive data
@@ -45,17 +43,31 @@ entity tang_nano_9k is
     jtag_tdo_o     : out std_ulogic;                                -- serial data output
     jtag_tms_i     : in  std_ulogic;                                -- mode select
 
-    -- SDI --
-    spi_clk_i      : in std_ulogic;                                -- serial clock (in)
-    spi_dat_i      : in std_ulogic;                                -- serial data input
-    spi_dat_o      : out std_ulogic;                               -- serial data output
-    spi_csn_i      : in std_ulogic;                                 -- serial data chip selectn
+    -- SPI --
+    spi_clk_o      : out std_ulogic;                                -- serial clock (in)
+    spi_dat_o      : out std_ulogic;                                -- serial data input
+    spi_dat_i      : in std_ulogic;                               -- serial data output
+    spi_csn_o      : out std_ulogic_vector(7 downto 0);             -- serial data chip selectn
 
     -- I2C --
     twi_sda_i      : in  std_ulogic;
     twi_sda_o      : out std_ulogic;      
     twi_scl_i      : in  std_ulogic;
-    twi_scl_o      : out std_ulogic               
+    twi_scl_o      : out std_ulogic;
+
+    -- XBUS --
+    xbus_adr_o     : out std_ulogic_vector(31 downto 0);                     -- address
+    xbus_dat_o     : out std_ulogic_vector(31 downto 0);                     -- write data
+    xbus_cti_o     : out std_ulogic_vector(2 downto 0);                      -- cycle type
+    xbus_tag_o     : out std_ulogic_vector(2 downto 0);                      -- access tag
+    xbus_we_o      : out std_ulogic;                                         -- read/write
+    xbus_sel_o     : out std_ulogic_vector(3 downto 0);                      -- byte enable
+    xbus_stb_o     : out std_ulogic;                                         -- strobe
+    xbus_cyc_o     : out std_ulogic;                                         -- valid cycle
+    xbus_dat_i     : in  std_ulogic_vector(31 downto 0);                     -- read data
+    xbus_ack_i     : in  std_ulogic;                                         -- transfer acknowledge
+    xbus_err_i     : in  std_ulogic                                          -- transfer error
+
   );
 end entity;
 
@@ -64,67 +76,7 @@ architecture top_rtl of tang_nano_9k is
   signal con_gpio_out : std_ulogic_vector(31 downto 0);
 
 
-  -- Xbus signals
-  signal xbus_adr_o : std_ulogic_vector(31 downto 0);
-  signal xbus_dat_o : std_ulogic_vector(31 downto 0);
-  signal xbus_tag_o : std_ulogic_vector(2 downto 0);
-  signal xbus_we_o : std_ulogic;
-  signal xbus_sel_o : std_ulogic_vector(3 downto 0);
-  signal xbus_stb_o : std_ulogic;
-  signal xbus_cyc_o : std_ulogic;
-  signal xbus_dat_i : std_ulogic_vector(31 downto 0);
-  signal xbus_ack_i : std_ulogic;
-  signal xbus_err_i : std_ulogic;
-
-  -- Xbus interconnect
-  signal sel_uflash    : std_logic := '0';
-
-
-  -- Slave A signals
-  signal uflash_ack_i : std_ulogic;
-  signal uflash_err_i : std_ulogic := '0';
-  signal uflash_dat_i : std_ulogic_vector(31 downto 0);
-
-begin
-
-
-  -- Check if address is in uflash range
-  sel_uflash <= '1' when (
-      (unsigned(xbus_adr_o) >= unsigned(UFLASH_BASE)) and
-      (unsigned(xbus_adr_o) < unsigned(UFLASH_END))
-      ) else '0';
-
-  -- Connect the Xbus signals to the selected slave, or default to err if no slave is selected
-  xbus_ack_i <= uflash_ack_i when (sel_uflash = '1') else
-             '1';
-
-  xbus_err_i <= uflash_err_i when (sel_uflash = '1') else
-             '1'; -- default to err if no slave is selected
-
-  xbus_dat_i <= uflash_dat_i when (sel_uflash = '1') else
-             x"deadbeef"; -- default to 0 if no slave is selected
-
-  -- uflash_inst: entity work.uflash
-  -- generic map (
-  --   CLK_FREQ => CLOCK_FREQUENCY
-  -- )
-  -- port map (
-  --   reset_n => rstn_i,
-  --   clk => clk_i,
-  --   wb_cyc_i => xbus_cyc_o,
-  --   wb_stb_i => xbus_stb_o,
-  --   wb_we_i => xbus_we_o,
-  --   wb_sel_i => xbus_sel_o,
-  --   wb_adr_i => xbus_adr_o(16 downto 2),
-  --   wb_dat_o => uflash_dat_i,
-  --   wb_dat_i => xbus_dat_o,
-  --   wb_ack_o => uflash_ack_i,
-  --   wb_err_o => uflash_err_i
-  -- );
-
-
-
-
+  begin
   -- The Core Of The Problem ----------------------------------------------------------------
   -- -------------------------------------------------------------------------------------------
   neorv32_top_inst: neorv32_top
@@ -147,11 +99,11 @@ begin
     DMEM_SIZE           => MEM_INT_DMEM_SIZE, -- size of processor-internal data memory in bytes
     DMEM_OUTREG_EN      => true,
     -- Processor peripherals --
-    IO_GPIO_NUM         => 5,                 -- number of GPIO input/output pairs (0..32)
+    IO_GPIO_NUM         => 8,                 -- number of GPIO input/output pairs (0..32)
     IO_CLINT_EN         => true,              -- implement core local interruptor (CLINT)?
     IO_UART0_EN         => true,              -- implement primary universal asynchronous receiver/transmitter (UART0)?
-    IO_SDI_EN           => true,              -- implement serial peripheral interface (SPI)
-    IO_SDI_FIFO         => 1,                 -- RTX FIFO depth, has to be zero or a power of two, min 1
+    IO_SPI_EN           => true,              -- implement serial peripheral interface (SPI)
+    IO_SPI_FIFO         => 8,                 -- RTX FIFO depth, has to be zero or a power of two, min 1
 
     -- I2C --
     IO_TWI_EN           => true,
@@ -163,7 +115,7 @@ begin
 
 
 
-    XBUS_EN           => false,              -- implement X-Bus interface
+    XBUS_EN           => true,              -- implement X-Bus interface
     XBUS_TIMEOUT      => 0                  -- Disable timeout, flash erase can take a long time
   )
   port map (
@@ -186,10 +138,10 @@ begin
     jtag_tms_i => jtag_tms_i,                                 -- mode select
 
 
-    sdi_clk_i => spi_clk_i,
-    sdi_dat_i => spi_dat_i,
-    sdi_dat_o => spi_dat_o,
-    sdi_csn_i => spi_csn_i,
+    spi_clk_o => spi_clk_o,
+    spi_dat_o => spi_dat_o,
+    spi_dat_i => spi_dat_i,
+    spi_csn_o => spi_csn_o,
 
     twi_sda_i => twi_sda_i,
     twi_sda_o => twi_sda_o,     
@@ -199,6 +151,7 @@ begin
     -- Xbus signals
     xbus_adr_o => xbus_adr_o,
     xbus_dat_o => xbus_dat_o,
+    xbus_cti_o => xbus_cti_o,
     xbus_tag_o => xbus_tag_o,
     xbus_we_o => xbus_we_o,
     xbus_sel_o => xbus_sel_o,
@@ -211,7 +164,7 @@ begin
   );
 
   -- GPIO output --
-  gpio_o <= con_gpio_out(4 downto 0);
+  gpio_o <= con_gpio_out(7 downto 0);
 
 
 end architecture;

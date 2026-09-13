@@ -27,9 +27,12 @@ src/main.o: ../src/main.c \
  C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32_uart.h \
  C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32_wdt.h \
  C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/init_module.h \
- C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32.h \
- C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/i2c_driver.h \
+ C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/i2c_driver_flash.h \
  C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/utility.h \
+ C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32.h \
+ C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/st7789.h \
+ C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/fonts.h \
+ C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/bitmap.h \
  C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/init_module.h
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32.h:
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32_aux.h:
@@ -59,7 +62,10 @@ C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32_twi.h:
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32_uart.h:
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32_wdt.h:
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/init_module.h:
-C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32.h:
-C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/i2c_driver.h:
+C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/i2c_driver_flash.h:
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/utility.h:
+C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/neorv32.h:
+C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/st7789.h:
+C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/fonts.h:
+C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/bitmap.h:
 C:\QuartusPrj\Omdazz\sdk\neorv32_demo\lib\include/init_module.h:

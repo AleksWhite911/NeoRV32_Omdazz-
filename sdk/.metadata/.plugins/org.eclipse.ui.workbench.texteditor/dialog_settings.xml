@@ -4,6 +4,13 @@
 	<section name="java.lang.Class">
 		<item key="replaceBarOpen" value="false"/>
 		<list key="findhistory">
+			<item value="ST7789_ExecuteCommandList"/>
+			<item value="ST7789_SendCmd"/>
+			<item value="neorv32_spi_cs_en"/>
+			<item value="ST7789_Width"/>
+			<item value="cs"/>
+			<item value="size_t"/>
+			<item value="ST7789_IS_240X320"/>
 			<item value="NEORV32_TWI_CTRL_enum"/>
 			<item value="NEORV32_EXCEPTION_CODES"/>
 		</list>

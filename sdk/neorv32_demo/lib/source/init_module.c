@@ -180,6 +180,10 @@ void check_modules(void) {
 			status_struct_wdt = 1;
 		}
 	#endif
+
+	#if (_DISPLAY_)
+		status_struct.display = 1;
+	#endif
 }
 
 
@@ -198,11 +202,21 @@ bool init_module(void) {
 		#if (_BEEP_)
 			short_beep();
 		#endif
+	}
 
+	if (!status_struct.spi) {
+		neorv32_uart0_printf("SPI - Not implement\n");
+	#if (_BEEP_)
+		long_beep();
+	#endif
+	} else {
+		neorv32_spi_setup(0, 0, 0, 0); //CPOL = 0, CPHA = 0 CLK_DIVIDER = 8
+		neorv32_spi_enable();
+		neorv32_uart0_printf("SPI - Init successful\n");
 	}
 
 	if (!status_struct.uart_1) {
-		neorv32_uart0_printf("UART_1 - Not implement \n");
+		neorv32_uart0_printf("UART_1 - Not implement\n");
 		#if (_BEEP_)
 			long_beep();
 		#endif
@@ -239,18 +253,13 @@ bool init_module(void) {
 		neorv32_uart0_printf("SDI - Init successful \n");
 	}
 
-	if (!status_struct.sdi_std_mode) {
-		neorv32_uart0_printf("SDI_STD - SDI_Controller is not implement!\n");
-		#if (_BEEP_)
-			long_beep();
-		#endif
+	if (!status_struct.display) {
+		neorv32_uart0_printf("DISPLAY - Not set!");
 	} else {
-		//STD_Protocol_Run();
-		neorv32_uart0_printf("SDI_STD - Init successful \n");
-		#if (_BEEP_)
-			short_beep();
-		#endif
+
 	}
+
+
 
 	return true;
 }

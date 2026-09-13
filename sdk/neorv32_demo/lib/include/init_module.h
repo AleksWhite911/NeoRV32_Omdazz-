@@ -11,9 +11,10 @@
 /*******************************************
  * Includes
  ******************************************/
+#include <i2c_driver_flash.h>
 #include "neorv32.h"
-#include "i2c_driver.h"
 #include "utility.h"
+#include "st7789.h"
 /*******************************************
  * Defines
  ******************************************/
@@ -22,15 +23,16 @@
 #define BAUD_RATE   		  9600
 #define I2C_PRSC				 2
 #define I2C_CDIV				 5
-#define CPU_CLOCK	      50000000
+#define CPU_CLOCK	      50000000	//TODO Check this parameter CPU_CLK
 #define GPIO_BEEP				 4
+
+#define _PLATFORM_NEORV32_	   true
 
 //False on True if periphery is available
 #define _UART_0_		true
 #define _UART_1_		false
 #define _UART_CONSOLE_	false
 #define	_SDI_			false	//SPI Slave mode controller
-#define _SDI_STD_		true	//SPI Slave mode std_protocol
 #define _CFS_			false
 #define _GPIO_			true
 #define _GPTMR_			false
@@ -40,13 +42,14 @@
 #define _ONEWIRE_		false
 #define _PWM_			false
 #define _SLINK_			false
-#define _SPI_			false	//SPI Master mode controller
+#define _SPI_			true	//SPI Master mode controller
 #define _TRACER_		false
 #define _TRNG_			false
 #define _TWD_			false
 #define _TWI_			true
 #define _WDT_			false
-#define _BEEP_			true
+#define _BEEP_			false
+#define _DISPLAY_		true
 
 
 
@@ -57,7 +60,6 @@ typedef struct {
 	bool uart_1;
 	bool uart_console;
 	bool sdi;
-	bool sdi_std_mode;
 	bool custom_func;
 	bool gpio_block;
 	bool general_timer;
@@ -73,6 +75,7 @@ typedef struct {
 	bool twd;
 	bool twi;
 	bool wdt;
+	bool display;
 
 } init_status_t;
 
