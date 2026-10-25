@@ -82,7 +82,30 @@ void i2c_write_byte(uint8_t data, uint8_t device_address, uint8_t word_address) 
 	neorv32_aux_delay_ms(CPU_CLOCK, dummy_delay);
 
 }
+void i2c_write_bytes(uint8_t *data, uint8_t length, uint8_t device_address) //без адреса регистра, для аналогии HAL_I2C_Master_Transmit
+{
+    uint8_t command;
+    uint8_t ack_get;
 
+    command = device_address & MASK_WRITE;
+
+    neorv32_twi_generate_start();
+
+    ack_get = neorv32_twi_transfer(&command, 0);
+
+    if (ack_get == 0) {
+
+        for (uint8_t i = 0; i < length; i++) {
+
+            ack_get = neorv32_twi_transfer(&data[i], 0);
+
+            if (ack_get != 0)
+                break;
+        }
+    }
+
+    neorv32_twi_generate_stop();
+}
 uint8_t i2c_read_byte(uint8_t device_address, uint8_t word_address) {
 	uint8_t dummy_data = 0xFF;
 	uint8_t data = 0xFF;
